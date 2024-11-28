@@ -23,7 +23,7 @@ class LoginInterface:
                 return {'flag':False }
             
         except pyodbc.Error as ex:
-            print('Connection Failed', ex)
+            print('Connection failed', ex)
             
   
 
