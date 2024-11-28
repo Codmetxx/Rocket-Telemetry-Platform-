@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roket Takip Paneli</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-image: url('arka1.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            color: #bcbcbc;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        /* Header Styles */
+        .header {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-clock {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #bcbcbc;
+        }
+
+        .header-weather {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.4rem;
+            color: #bcbcbc;
+        }
+
+        .header-weather span {
+            font-size: 1.4rem;
+            color: #bcbcbc;
+        }
+
+        .weather-icon-container, .location-icon-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .weather-icon-container i, .location-icon-container i {
+            font-size: 1.4rem;
+            color: #bcbcbc;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 1rem;
+        }
+
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .title {
+            margin-bottom: 1rem;
+            margin-top: -1rem;
+        }
+
+        .title h1 {
+            font-size: 2.50rem;
+            font-weight: 300;
+            margin-bottom: -0.5rem;
+            color: #bcbcbc;
+        }
+
+        .title h2 {
+            font-size: 2.50rem;
+            font-weight: 700;
+            color: #bcbcbc;
+        }
+
+        .title p {
+            color: #bcbcbc;
+            margin-top: 0.2rem;
+        }
+
+        .panel {
+            background-color: rgba(63, 63, 63, 0.9);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            height: 542.5px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel1 {
+            background-color: rgba(31, 41, 55, 0);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            height: 110px;
+            margin-bottom: 0.5rem;
+        }
+
+        .panel2 {
+            background: linear-gradient(
+                45deg,
+                rgba(129, 0, 0, 1),
+                rgba(217, 217, 217, 0.5)
+            );
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            height: fit-content;
+            min-height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .panel3 {
+            background: linear-gradient(
+                45deg,
+                rgba(0, 0, 0, 0.8),
+                rgba(217, 217, 217, 0.5)
+            );
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - 20px); /* Kenarlardan 40px boşluk bırakır */
+            height: 2px;
+            opacity: 0.15;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgb(229, 231, 235);
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .card {
+            background-color: rgba(94, 94, 94, 0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rover-card {
+            background-color: rgba(94, 94, 94, 0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+
+        .panel:last-child .rover-card {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 260px;
+        }
+
+        .panel:last-child .rover-card:nth-child(1) .card-title {
+            padding: 0 0 0.5rem 0;
+            margin-bottom: 0.25rem;
+            background-color: rgba(94, 94, 94, 0);
+            position: relative;
+            z-index: 2;
+        }
+
+        .rover-info {
+            background-color: rgba(94, 94, 94, 0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+
+        .rover-status {
+            background-color: rgba(94, 94, 94, 0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .panel:nth-child(2) .card:nth-child(2) {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 260px;
+        }
+
+        .panel:nth-child(2) .card:nth-child(2) .card-title {
+            padding: 0 0 0.5rem 0;
+            margin-bottom: 0.25rem;
+            background-color: rgba(94, 94, 94, 0);
+            position: relative;
+            z-index: 2;
+        }
+
+        .panel:nth-child(2) .card:nth-child(2) .gps-history {
+            overflow-y: auto;
+            max-height: 200px;
+            margin-right: -0.5rem;
+            padding-right: 0.5rem;
+            padding-top: 0;
+        }
+
+        .gps-history {
+            font-size: 0.875rem;
+            color: rgb(209, 213, 219);
+            line-height: 1.5;
+        }
+
+        .gps-history div {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gps-history div:last-child {
+            border-bottom: none;
+        }
+
+        .gps-history1 {
+            overflow-y: auto;
+            max-height: 200px;
+            margin-right: -0.5rem;
+            padding-right: 0.5rem;
+            padding-top: 0;
+            font-size: 0.875rem;
+            color: rgb(209, 213, 219);
+            line-height: 1.5;
+        }
+
+        .gps-history1 div {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gps-history1 div:last-child {
+            border-bottom: none;
+        }
+
+        .gps-history::-webkit-scrollbar,
+        .gps-history1::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .gps-history::-webkit-scrollbar-track,
+        .gps-history1::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .gps-history::-webkit-scrollbar-thumb,
+        .gps-history1::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .gps-history::-webkit-scrollbar-thumb:hover,
+        .gps-history1::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-label {
+            color: rgb(156, 163, 175);
+        }
+
+        .data-value {
+            color: rgb(229, 231, 235);
+        }
+
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .countdown-number {
+            font-size: 15rem;
+            color: white;
+            font-weight: bold;
+            opacity: 0;
+            transform: scale(2);
+            transition: all 0.5s ease-in-out;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .countdown-number.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .countdown-number.fade-out {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .timer-card {
+            height: 150px;
+            min-height: 130px;
+            max-height: 150px;
+        }
+
+        .timer-value {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: rgb(229, 231, 235);
+            height: 2.5rem; /* Sabit yükseklik */
+            line-height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .timer-label {
+            font-size: 0.875rem;
+            color: rgb(156, 163, 175);
+            margin-top: 0.5rem;
+            height: 1.25rem; /* Sabit yükseklik */
+            line-height: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: rgb(229, 231, 235);
+            margin-bottom: 0.75rem;
+        }
+
+        .charge-status {
+            color: rgb(16, 185, 129);
+        }
+
+        .rover-image {
+            width: 500px; /* Sabit genişlik */
+            height: 100px; /* Sabit yükseklik */
+            max-width: 90%; /* Maksimum genişlik */
+            max-height: 90%; /* Maksimum yükseklik */
+            margin: auto; /* Ortalama */
+            display: block;
+            object-fit: contain; /* Görüntüyü içeri sığdırma */
+        }
+
+
+        .rocket-img {
+            width: 51px;
+            height: 221px;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+            position: relative;
+            z-index: 1;
+        }
+
+        .weather-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .weather-brand-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: -0.4rem;
+        }
+
+        .weather-icon {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .weather-brand {
+            color: #bcbcbc;
+            font-size: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: -0.3rem;
+        }
+
+        .status-icon {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .status-text {
+            color: #bcbcbc;
+            font-size: 0.9rem;
+        }
+
+        .weather-message {
+            color: #bcbcbc;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+            height: 36px; /* Sabit yükseklik */
+        }
+
+        .timer-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 110px; /* Sabit genişlik */
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .timer-btn svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0; /* SVG'nin küçülmesini engeller */
+        }
+        .stop-btn {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: rgb(239, 68, 68);
+        }
+
+        .stop-btn:hover {
+            background-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .pause-btn {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: rgb(245, 158, 11);
+        }
+
+        .pause-btn:hover {
+            background-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .reset-btn {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: rgb(59, 130, 246);
+        }
+
+        .reset-btn:hover {
+            background-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            border: none;
+            border-radius: 30%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .logout-button {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .logout-button:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .logout-button svg {
+            color: rgb(239, 68, 68);
+        }
+
+        .back-button {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .back-button:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .back-button svg {
+            color: rgb(59, 130, 246);
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+        .fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 1;
+            z-index: 9999;
+            transition: opacity 1s ease-out;
+            pointer-events: none;
+        }
+
+        .fade-overlay.fade-out {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="fade-overlay"></div>
+    <div class="countdown-overlay" id="countdown-overlay">
+        <div class="countdown-number" id="countdown-number"></div>
+    </div>
+    <div class="header">
+        <div class="header-clock" id="current-clock">23:13:59.00</div>
+        <div class="header-weather">
+            <div class="weather-icon-container">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.6675 9.04038C20.0788 7.19583 17.8937 6.17716 15.5133 6.17716C14.7633 6.17716 13.9872 6.27616 13.1954 6.46895C14.1669 5.34868 15.4795 4.78333 17.1124 4.78333C19.3861 4.78333 21.8003 5.92966 23.1833 7.06557C23.2848 7.14894 23.4333 7.14372 23.527 7.05254C23.6234 6.96135 23.6364 6.81546 23.5583 6.70864C21.9149 4.48372 18.9798 3.04559 16.0759 3.04559C13.172 3.04559 10.5754 4.53061 8.93463 7.24533C8.85389 6.06774 9.17423 4.97612 9.89565 3.99653C11.3958 1.95918 14.3283 0.807642 16.4171 0.601824C16.5473 0.588797 16.6488 0.48198 16.6514 0.34911C16.6541 0.218845 16.5603 0.104212 16.4301 0.0859748C16.0524 0.0286583 15.6592 0 15.2581 0C12.3412 0 9.37217 1.48502 7.69754 3.78289C6.6636 5.20017 5.6583 7.53712 6.46827 10.8094C5.57756 10.033 5.03585 9.03517 4.85094 7.83152C4.4707 5.33044 5.73122 2.44116 7.06467 0.818063C7.14801 0.716457 7.14281 0.567955 7.05165 0.474164C6.9605 0.377768 6.81465 0.364742 6.70787 0.442901C4.28579 2.23274 2.82472 5.51802 3.07474 8.61832C3.29091 11.2992 4.76239 13.5632 7.24698 15.0716C7.12718 15.0795 7.00738 15.0847 6.89018 15.0847C3.10339 15.0847 0.900074 10.6088 0.603173 7.58402C0.590151 7.45376 0.483371 7.35215 0.350547 7.34954C0.215118 7.33912 0.105734 7.44073 0.0875028 7.57099C-0.290134 10.0825 0.57192 12.9145 2.3377 14.9648C3.92638 16.8094 6.11147 17.828 8.49188 17.828C9.24195 17.828 10.0207 17.729 10.8098 17.5337C9.83835 18.6539 8.52574 19.2193 6.89278 19.2193C4.61915 19.2193 2.20487 18.0729 0.821942 16.937C0.720371 16.8537 0.57192 16.8589 0.478162 16.9501C0.381799 17.0413 0.371382 17.1871 0.446909 17.294C2.09028 19.5189 5.02543 20.957 7.92933 20.957C10.8332 20.957 13.4298 19.472 15.0706 16.7573C15.1513 17.9349 14.831 19.0265 14.107 20.0061C12.6068 22.0434 9.67428 23.1924 7.58555 23.3982C7.45533 23.4112 7.35376 23.518 7.35116 23.6509C7.34855 23.7812 7.44231 23.8958 7.57253 23.914C7.95017 23.9713 8.34604 24 8.74451 24C11.6614 24 14.6304 22.515 16.3051 20.2171C17.339 18.7998 18.3443 16.4655 17.5343 13.1932C18.425 13.967 18.9668 14.9674 19.1491 16.1711C19.5293 18.6722 18.2688 21.5588 16.9353 23.1845C16.852 23.2861 16.8572 23.4347 16.9483 23.5284C17.0395 23.6248 17.1853 23.6379 17.2921 23.5597C19.7142 21.7699 21.1753 18.4846 20.9253 15.3843C20.7091 12.706 19.2376 10.4394 16.753 8.93096C16.8728 8.92314 16.99 8.91793 17.1072 8.91793C20.894 8.91793 23.0973 13.3938 23.3942 16.4186C23.4072 16.5488 23.514 16.6505 23.6468 16.6531C23.7771 16.6531 23.8917 16.5619 23.9125 16.4316C24.2901 13.9201 23.4281 11.0881 21.6623 9.03778L21.6675 9.04038Z" fill="#BCBCBC"/>
+                </svg>
+                <span>25°C</span>
+            </div>
+            <div class="location-icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+                    <path fill="#bcbcbc" d="M17.657 5.304c-3.124-3.073-8.189-3.073-11.313 0a7.78 7.78 0 0 0 0 11.13L12 21.999l5.657-5.565a7.78 7.78 0 0 0 0-11.13M12 13.499c-.668 0-1.295-.26-1.768-.732a2.503 2.503 0 0 1 0-3.536c.472-.472 1.1-.732 1.768-.732s1.296.26 1.768.732a2.503 2.503 0 0 1 0 3.536c-.472.472-1.1.732-1.768.732"/>
+                </svg>
+                <span>Ankara, Türkiye</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="info-panel">
+            <div class="panel1">
+                <div class="title">
+                    <h1>Merhaba</h1>
+                    <h2>Sencer</h2>
+                    <p>ID: 000001</p>
+                </div>
+            </div>
+            <div class="panel1">
+                <div class="panel2">
+                    <div class="weather-content">
+                        <div class="weather-brand-container">
+                            <div class="weather-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21.6675 9.04038C20.0788 7.19583 17.8937 6.17716 15.5133 6.17716C14.7633 6.17716 13.9872 6.27616 13.1954 6.46895C14.1669 5.34868 15.4795 4.78333 17.1124 4.78333C19.3861 4.78333 21.8003 5.92966 23.1833 7.06557C23.2848 7.14894 23.4333 7.14372 23.527 7.05254C23.6234 6.96135 23.6364 6.81546 23.5583 6.70864C21.9149 4.48372 18.9798 3.04559 16.0759 3.04559C13.172 3.04559 10.5754 4.53061 8.93463 7.24533C8.85389 6.06774 9.17423 4.97612 9.89565 3.99653C11.3958 1.95918 14.3283 0.807642 16.4171 0.601824C16.5473 0.588797 16.6488 0.48198 16.6514 0.34911C16.6541 0.218845 16.5603 0.104212 16.4301 0.0859748C16.0524 0.0286583 15.6592 0 15.2581 0C12.3412 0 9.37217 1.48502 7.69754 3.78289C6.6636 5.20017 5.6583 7.53712 6.46827 10.8094C5.57756 10.033 5.03585 9.03517 4.85094 7.83152C4.4707 5.33044 5.73122 2.44116 7.06467 0.818063C7.14801 0.716457 7.14281 0.567955 7.05165 0.474164C6.9605 0.377768 6.81465 0.364742 6.70787 0.442901C4.28579 2.23274 2.82472 5.51802 3.07474 8.61832C3.29091 11.2992 4.76239 13.5632 7.24698 15.0716C7.12718 15.0795 7.00738 15.0847 6.89018 15.0847C3.10339 15.0847 0.900074 10.6088 0.603173 7.58402C0.590151 7.45376 0.483371 7.35215 0.350547 7.34954C0.215118 7.33912 0.105734 7.44073 0.0875028 7.57099C-0.290134 10.0825 0.57192 12.9145 2.3377 14.9648C3.92638 16.8094 6.11147 17.828 8.49188 17.828C9.24195 17.828 10.0207 17.729 10.8098 17.5337C9.83835 18.6539 8.52574 19.2193 6.89278 19.2193C4.61915 19.2193 2.20487 18.0729 0.821942 16.937C0.720371 16.8537 0.57192 16.8589 0.478162 16.9501C0.381799 17.0413 0.371382 17.1871 0.446909 17.294C2.09028 19.5189 5.02543 20.957 7.92933 20.957C10.8332 20.957 13.4298 19.472 15.0706 16.7573C15.1513 17.9349 14.831 19.0265 14.107 20.0061C12.6068 22.0434 9.67428 23.1924 7.58555 23.3982C7.45533 23.4112 7.35376 23.518 7.35116 23.6509C7.34855 23.7812 7.44231 23.8958 7.57253 23.914C7.95017 23.9713 8.34604 24 8.74451 24C11.6614 24 14.6304 22.515 16.3051 20.2171C17.339 18.7998 18.3443 16.4655 17.5343 13.1932C18.425 13.967 18.9668 14.9674 19.1491 16.1711C19.5293 18.6722 18.2688 21.5588 16.9353 23.1845C16.852 23.2861 16.8572 23.4347 16.9483 23.5284C17.0395 23.6248 17.1853 23.6379 17.2921 23.5597C19.7142 21.7699 21.1753 18.4846 20.9253 15.3843C20.7091 12.706 19.2376 10.4394 16.753 8.93096C16.8728 8.92314 16.99 8.91793 17.1072 8.91793C20.894 8.91793 23.0973 13.3938 23.3942 16.4186C23.4072 16.5488 23.514 16.6505 23.6468 16.6531C23.7771 16.6531 23.8917 16.5619 23.9125 16.4316C24.2901 13.9201 23.4281 11.0881 21.6623 9.03778L21.6675 9.04038Z" fill="#BCBCBC"/>
+                                </svg>
+                            </div>
+                            <div class="weather-brand">
+                                <span class="brand-name">SencerWeather</span>
+                            </div>
+                        </div>
+                        <div class="weather-status">
+                            <div class="status-container">
+                                <div class="status-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 16 16">
+                                        <path fill="#bcbcbc" d="M8 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 8 1m0 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6m6.5-2.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zM8 13a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 8 13M2.5 8.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zm.646-5.354a.5.5 0 0 1 .708 0l1 1a.5.5 0 1 1-.708.708l-1-1a.5.5 0 0 1 0-.708m.708 9.708a.5.5 0 1 1-.708-.707l1-1a.5.5 0 0 1 .708.707zm9-9.708a.5.5 0 0 0-.708 0l-1 1a.5.5 0 0 0 .708.708l1-1a.5.5 0 0 0 0-.708m-.708 9.708a.5.5 0 0 0 .708-.707l-1-1a.5.5 0 0 0-.708.707z"/>
+                                    </svg>
+                                </div>
+                                <span class="status-text">Hava Güneşli</span>
+                            </div>
+                        </div>
+                        <div class="weather-message">
+                            Uçuşa uygun elverişli hava.
+                        </div>
+                    </div>
+                </div>
+                <div class="panel3">
+                    <svg class="background-line" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 2">
+                        <line x1="40" y1="1" x2="360" y2="1" stroke="#bcbcbc" stroke-width="2"/>
+                    </svg>
+                    <img src="rck.png" alt="Roket" class="rocket-img">
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2 class="panel-title">Roket Takip</h2>
+            <div class="card-grid">
+                <!-- Anlık GPS Verileri -->
+                <div class="card">
+                    <h3 class="card-title">Anlık GPS Verileri</h3>
+                    <div class="data-row">
+                        <span class="data-label">Zaman:</span>
+                        <span class="data-value" id="current-time">T+00:00:00</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Enlem:</span>
+                        <span class="data-value" id="current-latitude">0.0000° N</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Boylam:</span>
+                        <span class="data-value" id="current-longitude">0.0000° E</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Yükseklik:</span>
+                        <span class="data-value" data-type="height">0 km</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">GPS Verileri</h3>
+                    <div class="gps-history">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Telemetri Verileri</h3>
+                    <div class="data-row">
+                        <span class="data-label">Hız:</span>
+                        <span class="data-value" data-type="speed">0 KM/H</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">İvme:</span>
+                        <span class="data-value" data-type="acceleration">0 G</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Sıcaklık:</span>
+                        <span class="data-value" data-type="temperature">15°C</span>
+                    </div>
+                </div>
+
+                <div class="card timer-card">
+                    <div class="timer-value" id="mission-timer">T+00:00:00</div>
+                    <div class="timer-label">SNC-A1 Uçuş Testi</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn reset-btn" id="startBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Başlat
+                        </button>
+                        <button class="timer-btn pause-btn" id="pauseBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m-9-3a9 9 0 1118 0 9 9 0 01-18 0z" />
+                            </svg>
+                            Duraklat
+                        </button>
+                        <button class="timer-btn reset-btn" id="resetBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Sıfırla
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2 class="panel-title">Rover Takip</h2>
+            
+            <!-- GPS Verileri -->
+            <div class="rover-card">
+                <h3 class="card-title">GPS Verileri</h3>
+                <div class="gps-history1">
+                    <div>T+00:06:00 - 29.610° N - 80.5985° W, 105 km</div>
+                    <div>T+00:05:00 - 28.605° N - 81.6085° W, 100 km</div>
+                    <div>T+00:04:00 - 27.600° N - 82.6185° W, 95 km</div>
+                    <div>T+00:03:00 - 26.615° N - 83.6005° W, 90 km</div>
+                    <div>T+00:02:00 - 25.620° N - 84.5925° W, 85 km</div>
+                    <div>T+00:01:00 - 24.625° N - 85.5845° W, 80 km</div>
+                    <div>T+00:00:00 - 23.630° N - 86.5765° W, 75 km</div>
+                </div>
+            </div>
+        
+            <div class="rover-info">
+                <h3 class="card-title">Rover Bilgileri</h3>
+                <div class="data-row">
+                    <span class="data-label">Şarj Durumu:</span>
+                    <span class="charge-status">%100</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Sıcaklık ve Nem:</span>
+                    <span class="data-value" data-type="temperature">15°C</span>
+                </div>
+            </div>
+        
+            <div class="rover-status">
+                <img src="rvr.png" alt="Rover Status" class="rover-image">
+            </div>
+        <div class="nav-buttons">
+            <button class="nav-button back-button" onclick="handleBack()" title="Geri Dön">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <button class="nav-button logout-button" onclick="handleLogout()" title="Çıkış Yap">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let rocketData = [
+            {second: 0, altitude: 0, speed: 0, acceleration: 0, temperature: 15.0},
+            {second: 1, altitude: 5, speed: 150, acceleration: 8.5, temperature: 15.0},
+            {second: 2, altitude: 15, speed: 300, acceleration: 9.2, temperature: 14.8},
+            {second: 3, altitude: 30, speed: 450, acceleration: 9.8, temperature: 14.6},
+            {second: 4, altitude: 50, speed: 600, acceleration: 10.0, temperature: 14.4},
+            {second: 5, altitude: 75, speed: 800, acceleration: 10.0, temperature: 14.2},
+            {second: 6, altitude: 105, speed: 900, acceleration: 9.8, temperature: 14.0},
+            {second: 7, altitude: 140, speed: 950, acceleration: 9.5, temperature: 13.8},
+            {second: 8, altitude: 180, speed: 1000, acceleration: 9.2, temperature: 13.6},
+            {second: 9, altitude: 225, speed: 1050, acceleration: 8.8, temperature: 13.4},
+            {second: 10, altitude: 275, speed: 1100, acceleration: 8.5, temperature: 13.2},
+            {second: 11, altitude: 320, speed: 1108, acceleration: 8.3, temperature: 13.0},
+            {second: 12, altitude: 365, speed: 1116, acceleration: 8.1, temperature: 12.9},
+            {second: 13, altitude: 410, speed: 1124, acceleration: 7.9, temperature: 12.8},
+            {second: 14, altitude: 455, speed: 1132, acceleration: 7.7, temperature: 12.7},
+            {second: 15, altitude: 500, speed: 1141.7, acceleration: 7.5, temperature: 12.5},
+            {second: 16, altitude: 550, speed: 1141.7, acceleration: 7.3, temperature: 12.4},
+            {second: 17, altitude: 600, speed: 1141.7, acceleration: 7.1, temperature: 12.3},
+            {second: 18, altitude: 650, speed: 1141.7, acceleration: 6.9, temperature: 12.2},
+            {second: 19, altitude: 700, speed: 1141.7, acceleration: 6.7, temperature: 12.1},
+            {second: 20, altitude: 750, speed: 1141.7, acceleration: 6.5, temperature: 12.0},
+            {second: 21, altitude: 800, speed: 1133, acceleration: 6.3, temperature: 11.9},
+            {second: 22, altitude: 850, speed: 1125, acceleration: 6.1, temperature: 11.8},
+            {second: 23, altitude: 900, speed: 1117, acceleration: 5.9, temperature: 11.7},
+            {second: 24, altitude: 950, speed: 1108, acceleration: 5.7, temperature: 11.6},
+            {second: 25, altitude: 1000, speed: 1100, acceleration: 5.5, temperature: 11.5},
+            {second: 26, altitude: 1050, speed: 1090, acceleration: 5.3, temperature: 11.4},
+            {second: 27, altitude: 1100, speed: 1080, acceleration: 5.1, temperature: 11.3},
+            {second: 28, altitude: 1150, speed: 1070, acceleration: 4.9, temperature: 11.2},
+            {second: 29, altitude: 1200, speed: 1060, acceleration: 4.7, temperature: 11.1},
+            {second: 30, altitude: 1250, speed: 1050, acceleration: 4.5, temperature: 11.0},
+            {second: 31, altitude: 1300, speed: 1040, acceleration: 4.4, temperature: 10.9},
+            {second: 32, altitude: 1350, speed: 1030, acceleration: 4.3, temperature: 10.8},
+            {second: 33, altitude: 1400, speed: 1020, acceleration: 4.2, temperature: 10.7},
+            {second: 34, altitude: 1450, speed: 1010, acceleration: 4.1, temperature: 10.6},
+            {second: 35, altitude: 1500, speed: 1000, acceleration: 4.0, temperature: 10.5},
+            {second: 36, altitude: 1550, speed: 990, acceleration: 3.9, temperature: 10.4},
+            {second: 37, altitude: 1600, speed: 980, acceleration: 3.8, temperature: 10.3},
+            {second: 38, altitude: 1650, speed: 970, acceleration: 3.7, temperature: 10.2},
+            {second: 39, altitude: 1700, speed: 960, acceleration: 3.6, temperature: 10.1},
+            {second: 40, altitude: 1750, speed: 950, acceleration: 3.5, temperature: 10.0},
+            {second: 41, altitude: 1800, speed: 940, acceleration: 3.4, temperature: 9.9},
+            {second: 42, altitude: 1850, speed: 930, acceleration: 3.3, temperature: 9.8},
+            {second: 43, altitude: 1900, speed: 920, acceleration: 3.2, temperature: 9.7},
+            {second: 44, altitude: 1950, speed: 910, acceleration: 3.1, temperature: 9.6},
+            {second: 45, altitude: 2000, speed: 900, acceleration: 3.0, temperature: 9.5},
+            {second: 46, altitude: 2050, speed: 890, acceleration: 2.9, temperature: 9.4},
+            {second: 47, altitude: 2100, speed: 880, acceleration: 2.8, temperature: 9.3},
+            {second: 48, altitude: 2150, speed: 870, acceleration: 2.7, temperature: 9.2},
+            {second: 49, altitude: 2200, speed: 860, acceleration: 2.6, temperature: 9.1},
+            {second: 50, altitude: 2250, speed: 850, acceleration: 2.5, temperature: 9.0},
+            {second: 51, altitude: 2300, speed: 840, acceleration: 2.4, temperature: 8.9},
+            {second: 52, altitude: 2350, speed: 830, acceleration: 2.3, temperature: 8.8},
+            {second: 53, altitude: 2400, speed: 820, acceleration: 2.2, temperature: 8.7},
+            {second: 54, altitude: 2450, speed: 810, acceleration: 2.1, temperature: 8.6},
+            {second: 55, altitude: 2500, speed: 800, acceleration: 2.0, temperature: 8.5},
+            {second: 56, altitude: 2550, speed: 780, acceleration: 1.9, temperature: 8.4},
+            {second: 57, altitude: 2600, speed: 760, acceleration: 1.8, temperature: 8.3},
+            {second: 58, altitude: 2650, speed: 740, acceleration: 1.7, temperature: 8.2},
+            {second: 59, altitude: 2700, speed: 720, acceleration: 1.6, temperature: 8.1},
+            {second: 60, altitude: 2750, speed: 700, acceleration: 1.5, temperature: 8.0},
+            {second: 61, altitude: 2800, speed: 660, acceleration: 1.4, temperature: 7.96},
+            {second: 62, altitude: 2850, speed: 620, acceleration: 1.3, temperature: 7.92},
+            {second: 63, altitude: 2900, speed: 580, acceleration: 1.2, temperature: 7.88},
+            {second: 64, altitude: 2950, speed: 540, acceleration: 1.1, temperature: 7.84},
+            {second: 65, altitude: 3000, speed: 500, acceleration: 1.0, temperature: 7.8},
+            {second: 66, altitude: 3080, speed: 440, acceleration: 0.9, temperature: 7.76},
+            {second: 67, altitude: 3160, speed: 380, acceleration: 0.8, temperature: 7.72},
+            {second: 68, altitude: 3240, speed: 320, acceleration: 0.7, temperature: 7.68},
+            {second: 69, altitude: 3320, speed: 260, acceleration: 0.6, temperature: 7.64},
+            {second: 70, altitude: 3400, speed: 200, acceleration: 0.5, temperature: 7.6},
+            {second: 71, altitude: 3390, speed: 160, acceleration: 0.4, temperature: 7.60},
+            {second: 72, altitude: 3380, speed: 120, acceleration: 0.3, temperature: 7.60},
+            {second: 73, altitude: 3370, speed: 90, acceleration: 0.25, temperature: 7.60},
+            {second: 74, altitude: 3360, speed: 70, acceleration: 0.22, temperature: 7.60},
+            {second: 75, altitude: 3350, speed: 50, acceleration: 0.2, temperature: 7.60},
+            {second: 76, altitude: 3340, speed: 45, acceleration: 0.2, temperature: 7.64},
+            {second: 77, altitude: 3330, speed: 40, acceleration: 0.2, temperature: 7.68},
+            {second: 78, altitude: 3320, speed: 35, acceleration: 0.2, temperature: 7.72},
+            {second: 79, altitude: 3310, speed: 32, acceleration: 0.2, temperature: 7.76},
+            {second: 80, altitude: 3300, speed: 30, acceleration: 0.2, temperature: 7.7},
+            {second: 81, altitude: 3280, speed: 30, acceleration: 0.2, temperature: 7.74},
+            {second: 82, altitude: 3260, speed: 30, acceleration: 0.2, temperature: 7.76},
+            {second: 83, altitude: 3240, speed: 30, acceleration: 0.2, temperature: 7.78},
+            {second: 84, altitude: 3220, speed: 30, acceleration: 0.2, temperature: 7.79},
+            {second: 85, altitude: 3200, speed: 30, acceleration: 0.2, temperature: 7.8},
+            {second: 86, altitude: 3180, speed: 30, acceleration: 0.2, temperature: 7.84},
+            {second: 87, altitude: 3160, speed: 30, acceleration: 0.2, temperature: 7.88},
+            {second: 88, altitude: 3140, speed: 30, acceleration: 0.2, temperature: 7.92},
+            {second: 89, altitude: 3120, speed: 30, acceleration: 0.2, temperature: 7.96},
+            {second: 90, altitude: 3100, speed: 30, acceleration: 0.2, temperature: 8.0},
+            {second: 91, altitude: 3080, speed: 30, acceleration: 0.2, temperature: 8.04},
+            {second: 92, altitude: 3060, speed: 30, acceleration: 0.2, temperature: 8.08},
+            {second: 93, altitude: 3040, speed: 30, acceleration: 0.2, temperature: 8.12},
+            {second: 94, altitude: 3020, speed: 30, acceleration: 0.2, temperature: 8.16},
+            {second: 95, altitude: 3000, speed: 30, acceleration: 0.2, temperature: 8.2},
+            {second: 96, altitude: 2980, speed: 30, acceleration: 0.2, temperature: 8.24},
+            {second: 97, altitude: 2960, speed: 30, acceleration: 0.2, temperature: 8.28},
+            {second: 98, altitude: 2940, speed: 30, acceleration: 0.2, temperature: 8.32},
+            {second: 99, altitude: 2920, speed: 30, acceleration: 0.2, temperature: 8.36},
+            {second: 100, altitude: 2900, speed: 30, acceleration: 0.2, temperature: 8.4},
+            {second: 101, altitude: 2880, speed: 30, acceleration: 0.2, temperature: 8.44},
+            {second: 102, altitude: 2860, speed: 30, acceleration: 0.2, temperature: 8.48},
+            {second: 103, altitude: 2840, speed: 30, acceleration: 0.2, temperature: 8.52},
+            {second: 104, altitude: 2820, speed: 30, acceleration: 0.2, temperature: 8.56},
+            {second: 105, altitude: 2800, speed: 30, acceleration: 0.2, temperature: 8.6},
+            {second: 106, altitude: 2780, speed: 30, acceleration: 0.2, temperature: 8.64},
+            {second: 107, altitude: 2760, speed: 30, acceleration: 0.2, temperature: 8.68},
+            {second: 108, altitude: 2740, speed: 30, acceleration: 0.2, temperature: 8.72},
+            {second: 109, altitude: 2720, speed: 30, acceleration: 0.2, temperature: 8.76},
+            {second: 110, altitude: 2700, speed: 30, acceleration: 0.2, temperature: 8.8},
+            {second: 111, altitude: 2680, speed: 30, acceleration: 0.2, temperature: 8.84},
+            {second: 112, altitude: 2660, speed: 30, acceleration: 0.2, temperature: 8.88},
+            {second: 113, altitude: 2640, speed: 30, acceleration: 0.2, temperature: 8.92},
+            {second: 114, altitude: 2620, speed: 30, acceleration: 0.2, temperature: 8.96},
+            {second: 115, altitude: 2600, speed: 30, acceleration: 0.2, temperature: 9.0},
+            {second: 116, altitude: 2580, speed: 30, acceleration: 0.2, temperature: 9.04},
+            {second: 117, altitude: 2560, speed: 30, acceleration: 0.2, temperature: 9.08},
+            {second: 118, altitude: 2540, speed: 30, acceleration: 0.2, temperature: 9.12},
+            {second: 119, altitude: 2520, speed: 30, acceleration: 0.2, temperature: 9.16},
+            {second: 120, altitude: 2500, speed: 30, acceleration: 0.2, temperature: 9.2},
+            {second: 121, altitude: 2480, speed: 30, acceleration: 0.2, temperature: 9.24},
+            {second: 122, altitude: 2460, speed: 30, acceleration: 0.2, temperature: 9.28},
+            {second: 123, altitude: 2440, speed: 30, acceleration: 0.2, temperature: 9.32},
+            {second: 124, altitude: 2420, speed: 30, acceleration: 0.2, temperature: 9.36},
+            {second: 125, altitude: 2400, speed: 30, acceleration: 0.2, temperature: 9.4},
+            {second: 126, altitude: 2380, speed: 30, acceleration: 0.2, temperature: 9.44},
+            {second: 127, altitude: 2360, speed: 30, acceleration: 0.2, temperature: 9.48},
+            {second: 128, altitude: 2340, speed: 30, acceleration: 0.2, temperature: 9.52},
+            {second: 129, altitude: 2320, speed: 30, acceleration: 0.2, temperature: 9.56},
+            {second: 130, altitude: 2300, speed: 30, acceleration: 0.2, temperature: 9.6},
+            {second: 131, altitude: 2280, speed: 30, acceleration: 0.2, temperature: 9.64},
+            {second: 132, altitude: 2260, speed: 30, acceleration: 0.2, temperature: 9.68},
+            {second: 133, altitude: 2240, speed: 30, acceleration: 0.2, temperature: 9.72},
+            {second: 134, altitude: 2220, speed: 30, acceleration: 0.2, temperature: 9.76},
+            {second: 135, altitude: 2200, speed: 30, acceleration: 0.2, temperature: 9.8},
+            {second: 136, altitude: 2180, speed: 30, acceleration: 0.2, temperature: 9.84},
+            {second: 137, altitude: 2160, speed: 30, acceleration: 0.2, temperature: 9.88},
+            {second: 138, altitude: 2140, speed: 30, acceleration: 0.2, temperature: 9.92},
+            {second: 139, altitude: 2120, speed: 30, acceleration: 0.2, temperature: 9.96},
+            {second: 140, altitude: 2100, speed: 30, acceleration: 0.2, temperature: 10.0},
+            {second: 141, altitude: 2080, speed: 30, acceleration: 0.2, temperature: 10.04},
+            {second: 142, altitude: 2060, speed: 30, acceleration: 0.2, temperature: 10.08},
+            {second: 143, altitude: 2040, speed: 30, acceleration: 0.2, temperature: 10.12},
+            {second: 144, altitude: 2020, speed: 30, acceleration: 0.2, temperature: 10.16},
+            {second: 145, altitude: 2000, speed: 30, acceleration: 0.2, temperature: 10.2},
+            {second: 146, altitude: 1900, speed: 30, acceleration: 0.2, temperature: 10.36},
+            {second: 147, altitude: 1800, speed: 30, acceleration: 0.2, temperature: 10.52},
+            {second: 148, altitude: 1700, speed: 30, acceleration: 0.2, temperature: 10.68},
+            {second: 149, altitude: 1600, speed: 30, acceleration: 0.2, temperature: 10.84},
+            {second: 150, altitude: 1500, speed: 30, acceleration: 0.2, temperature: 11.0},
+            {second: 151, altitude: 1400, speed: 30, acceleration: 0.2, temperature: 11.2},
+            {second: 152, altitude: 1300, speed: 30, acceleration: 0.2, temperature: 11.4},
+            {second: 153, altitude: 1200, speed: 30, acceleration: 0.2, temperature: 11.6},
+            {second: 154, altitude: 1100, speed: 30, acceleration: 0.2, temperature: 11.8},
+            {second: 155, altitude: 1000, speed: 30, acceleration: 0.2, temperature: 12.0},
+            {second: 156, altitude: 900, speed: 30, acceleration: 0.2, temperature: 12.2},
+            {second: 157, altitude: 800, speed: 30, acceleration: 0.2, temperature: 12.4},
+            {second: 158, altitude: 700, speed: 30, acceleration: 0.2, temperature: 12.6},
+            {second: 159, altitude: 600, speed: 30, acceleration: 0.2, temperature: 12.8},
+            {second: 160, altitude: 500, speed: 30, acceleration: 0.2, temperature: 13.0},
+            {second: 161, altitude: 450, speed: 29, acceleration: 0.2, temperature: 13.2},
+            {second: 162, altitude: 400, speed: 28, acceleration: 0.2, temperature: 13.4},
+            {second: 163, altitude: 350, speed: 27, acceleration: 0.2, temperature: 13.6},
+            {second: 164, altitude: 300, speed: 26, acceleration: 0.2, temperature: 13.8},
+            {second: 165, altitude: 250, speed: 25, acceleration: 0.2, temperature: 14.0},
+            {second: 166, altitude: 200, speed: 20, acceleration: 0.15, temperature: 14.2},
+            {second: 167, altitude: 150, speed: 15, acceleration: 0.1, temperature: 14.4},
+            {second: 168, altitude: 100, speed: 10, acceleration: 0.05, temperature: 14.6},
+            {second: 169, altitude: 50, speed: 5, acceleration: 0.02, temperature: 14.8},
+            {second: 170, altitude: 0, speed: 0, acceleration: 0, temperature: 15.0},
+        ];
+
+        let startTime = null;
+        let timerInterval = null;
+        let telemetryInterval = null;
+        let isPaused = false;
+        let pausedTime = 0;
+        let isStopped = true;
+        let currentSecond = 0;
+
+        const INITIAL_LATITUDE = 41.0082;
+        const INITIAL_LONGITUDE = 28.9784;
+
+        const ICONS = {
+            play: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Devam Et`,
+            pause: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m-9-3a9 9 0 1118 0 9 9 0 01-18 0z" />
+                </svg>
+                Duraklat`
+        };
+
+        function handleLogout() {
+            window.location.href = '../LoginProcedures/login.html';
+        }
+
+        function handleBack() {
+            window.location.href = '../User/user.html';
+        }
+
+        function calculatePosition(second, altitude, speed) {
+            const maxAltitudeTime = 70; // 70. saniyede maksimum yüksekliğe ulaşıyor
+            const totalFlightTime = 170; // Toplam uçuş süresi
+            const parachuteOpenTime = maxAltitudeTime; // Paraşütün açılma zamanı
+            const parachuteDuration = 4; // Paraşüt açılma sonrası sallanma süresi
+
+            let angle;
+
+            if (second === 0) {
+                angle = 0;
+            } else if (second <= maxAltitudeTime) {
+                const progress = second / maxAltitudeTime;
+                angle = 5 + (85 * progress); 
+            } else if (second <= parachuteOpenTime + parachuteDuration) {
+                const oscillationTime = second - parachuteOpenTime;
+                const oscillation = Math.sin(oscillationTime * Math.PI) * 45;
+                angle = 30 + oscillation;
+            } else {
+                const descentProgress = (second - (parachuteOpenTime + parachuteDuration)) /
+                                    (totalFlightTime - (parachuteOpenTime + parachuteDuration));
+                
+                const randomFactor = Math.sin(second * 0.1) * 3;
+                
+
+                const baseAngle = 30 - (55 * descentProgress); 
+                
+
+                angle = baseAngle + randomFactor;
+                
+                if (descentProgress > 0.9) { 
+                    angle = Math.max(-30, Math.min(-20, angle));
+                }
+            }
+
+            const horizontalDistance = (speed * second) / 50000;
+            const angleRad = (angle * Math.PI) / 180;
+            
+
+            const longitude = INITIAL_LONGITUDE + (horizontalDistance * Math.cos(angleRad));
+            
+
+            const latitude = INITIAL_LATITUDE + (horizontalDistance * Math.sin(angleRad) * 0.3);
+
+            return {
+                latitude: parseFloat(latitude.toFixed(6)),
+                longitude: parseFloat(longitude.toFixed(6)),
+                angle: parseFloat(angle.toFixed(1))
+            };
+        }
+
+
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            document.getElementById('current-clock').textContent = 
+                `${hours}:${minutes}:${seconds}`;
+        }
+
+
+        function updateTimer() {
+            if (!isPaused && !isStopped && startTime) {
+                const elapsed = Date.now() - startTime;
+                const seconds = Math.floor((elapsed / 1000) % 60);
+                const minutes = Math.floor((elapsed / 1000 / 60) % 60);
+                const hours = Math.floor(elapsed / 1000 / 60 / 60);
+
+                const timeString = `T+${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                
+                document.getElementById('mission-timer').textContent = timeString;
+                document.getElementById('current-time').textContent = timeString;
+            }
+        }
+
+
+        function updateTelemetryData(second) {
+            const data = rocketData[second];
+            if (data) {
+                try {
+                    const position = calculatePosition(second, data.altitude, data.speed);
+                    
+                    document.getElementById('current-latitude').textContent = `${position.latitude}° N`;
+                    document.getElementById('current-longitude').textContent = `${position.longitude}° E`;
+                    
+                    document.querySelector('[data-type="height"]').textContent = `${data.altitude} km`;
+                    document.querySelector('[data-type="speed"]').textContent = `${data.speed} KM/H`;
+                    document.querySelector('[data-type="acceleration"]').textContent = `${data.acceleration} G`;
+                    document.querySelector('[data-type="temperature"]').textContent = `${data.temperature}°C`;
+
+                    const gpsHistory = document.querySelector('.gps-history');
+                    const newEntry = document.createElement('div');
+                    const timeString = `T+${String(Math.floor(second / 3600)).padStart(2, '0')}:${String(Math.floor((second % 3600) / 60)).padStart(2, '0')}:${String(second % 60).padStart(2, '0')}`;
+                    newEntry.textContent = `${timeString} - ${position.latitude}° N, ${position.longitude}° E - ${data.altitude} km`;
+                    
+                    if (gpsHistory.firstChild) {
+                        gpsHistory.insertBefore(newEntry, gpsHistory.firstChild);
+                    } else {
+                        gpsHistory.appendChild(newEntry);
+                    }
+
+                    while (gpsHistory.children.length > 7) {
+                        gpsHistory.removeChild(gpsHistory.lastChild);
+                    }
+
+                    const rocketImg = document.querySelector('.rocket-img');
+                    if (rocketImg) {
+                        rocketImg.style.transform = `rotate(${position.angle}deg)`;
+                        rocketImg.style.transition = 'transform 0.5s ease';
+                    }
+                } catch (error) {
+                    console.error('Telemetri güncelleme hatası:', error);
+                }
+            }
+        }
+
+        function startCountdown() {
+            const overlay = document.getElementById('countdown-overlay');
+            const numberDisplay = document.getElementById('countdown-number');
+            let count = 3;
+
+            overlay.style.display = 'flex';
+            document.getElementById('startBtn').disabled = true;
+
+            function updateCount() {
+                numberDisplay.textContent = count;
+                numberDisplay.classList.add('active');
+
+                setTimeout(() => {
+                    numberDisplay.classList.add('fade-out');
+                    
+                    setTimeout(() => {
+                        numberDisplay.classList.remove('active', 'fade-out');
+                        count--;
+
+                        if (count >= 0) {
+                            updateCount();
+                        } else {
+                            overlay.style.display = 'none';
+                            startMission();
+                            document.getElementById('startBtn').disabled = false;
+                        }
+                    }, 500);
+                }, 500);
+            }
+
+            updateCount();
+        }
+
+        function startMission() {
+            isStopped = false;
+            isPaused = false;
+            startTime = Date.now();
+            currentSecond = 0;
+
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (pauseBtn) {
+                pauseBtn.innerHTML = ICONS.pause;
+            }
+
+            clearInterval(telemetryInterval);
+            telemetryInterval = setInterval(() => {
+                if (!isPaused && !isStopped && currentSecond < rocketData.length) {
+                    try {
+                        updateTelemetryData(currentSecond);
+                        currentSecond++;
+                    } catch (error) {
+                        console.error('Telemetri güncelleme hatası:', error);
+                    }
+                }
+            }, 1000);
+        }
+
+
+        function resetTimer() {
+            isStopped = true;
+            isPaused = false;
+            startTime = null;
+            currentSecond = 0;
+            clearInterval(telemetryInterval);
+            
+            document.getElementById('mission-timer').textContent = 'T+00:00:00';
+            document.getElementById('current-time').textContent = 'T+00:00:00';
+
+            const gpsHistory = document.querySelector('.gps-history');
+            if (gpsHistory) {
+                gpsHistory.innerHTML = '';
+            }
+            
+
+            try {
+                updateTelemetryData(0);
+            } catch (error) {
+                console.error('Telemetri sıfırlama hatası:', error);
+            }
+
+
+            const rocketImg = document.querySelector('.rocket-img');
+            if (rocketImg) {
+                rocketImg.style.transform = 'rotate(0deg)'; // Başlangıçta 0 derece
+            }
+
+
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (pauseBtn) {
+                pauseBtn.innerHTML = ICONS.pause;
+            }
+        }
+
+
+        function pauseTimer() {
+            if (!isStopped) {
+                isPaused = !isPaused;
+                const pauseBtn = document.getElementById('pauseBtn');
+                
+                if (pauseBtn) {
+                    if (isPaused) {
+                        pauseBtn.innerHTML = ICONS.play;
+                        pausedTime = Date.now();
+                    } else {
+                        pauseBtn.innerHTML = ICONS.pause;
+                        startTime += Date.now() - pausedTime;
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('load', function() {
+            document.querySelector('.fade-overlay').classList.add('fade-out');
+        });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Sayfa yüklendi');
+            
+
+            console.log('Roket veri sayısı:', rocketData.length);
+
+
+            setInterval(updateClock, 10);
+            
+
+            setInterval(updateTimer, 1000);
+            
+
+            const startBtn = document.getElementById('startBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            if (startBtn) startBtn.addEventListener('click', startCountdown);
+            if (pauseBtn) pauseBtn.addEventListener('click', pauseTimer);
+            if (resetBtn) resetBtn.addEventListener('click', resetTimer);
+            
+
+            try {
+                resetTimer();
+
+
+                const rocketImg = document.querySelector('.rocket-img');
+                if (rocketImg) {
+                    rocketImg.style.transform = 'rotate(0deg)'; 
+                    rocketImg.style.transition = 'transform 0.5s ease';
+                }
+            } catch (error) {
+                console.error('Başlangıç durumu ayarlama hatası:', error);
+            }
+        });
+    </script>
+</body>
+</html>

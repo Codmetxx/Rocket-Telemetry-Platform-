@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sencer Yönetim Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-image: url('test1.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 1;
+            z-index: 999;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        .fade-overlay.fade-out {
+            opacity: 0;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .title-text h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .title-text p {
+            color: #BCBCBC;
+            font-size: 0.875rem;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+
+        .tabs {
+            background-color: #353535;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-button.active {
+            background-color: #5e5e5e;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: #353535;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .stat-info p {
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .table-card {
+            background-color: #353535;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.5rem;
+        }
+
+        tr {
+            border-top: 1px solid #334155;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .status-active {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .status-test {
+            background-color: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .status-offline {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .action-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .action-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            background-color: #5E5E5E;
+            border: 1px solid #3F3F3F;
+            color: white;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .quick-action-button {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .emergency { background-color: #dc2626; }
+        .emergency:hover { background-color: #b91c1c; }
+        .data { background-color: #2563eb; }
+        .data:hover { background-color: #1d4ed8; }
+        .system { background-color: #16a34a; }
+        .system:hover { background-color: #15803d; }
+        .maintenance { background-color: #9333ea; }
+        .maintenance:hover { background-color: #7e22ce; }
+
+        .warning-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(234, 179, 8, 0.1);
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-card {
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        }
+
+        .avatar {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #3f3f3f;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+
+        .avatar img {
+        width: 90%;
+        height: 90%;
+        object-fit: contain;
+        }
+
+        .user-details h3 {
+        color: #f1f5f9;
+        font-weight: 500;
+        }
+
+        .user-details p {
+        color: #94a3b8;
+        font-size: 0.875rem;
+        }
+
+        .chart-container {
+        background-color: #1e293b;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        height: 300px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        }
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: #3f3f3f;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            min-width: 200px;
+            transform-origin: top right;
+            transform: scale(0.95);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .profile-dropdown.active {
+            transform: scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .profile-menu-container {
+            position: relative;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            color: #f1f5f9;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+            border-radius: 0.375rem;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #353535;
+            margin: 0.5rem 0;
+        }
+
+        .logout-button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            color: #ef4444;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+            border-radius: 0.375rem;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .flag-icon {
+            width: 22px;
+            height: 22px;
+        }
+
+        #languageSubmenu {
+            padding-left: 1rem;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="fade-overlay"></div>
+
+    <div class="top-bar">
+        <div class="title-section">
+            <i data-lucide="shield" style="color: #3b82f6;"></i>
+            <div class="title-text">
+                <h1>Sencer Yönetim Paneli</h1>
+                <p>Sistem Yönetici Paneli</p>
+            </div>
+        </div>
+        <div class="user-section">
+            <div class="user-info" onclick="toggleProfileMenu()">
+                <div class="avatar">
+                    <span class="text-white font-bold text-lg">A1</span>
+                </div>
+                <div class="user-details">
+                    <h3>User</h3>
+                    <p>Admin 1</p>
+                </div>
+            </div>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="dropdown-item" onclick="toggleLanguageMenu()">
+                    <i class="fas fa-globe w-5 h-5 mr-2"></i>
+                    <span id="languageText">Language</span>
+                    <i class="fas fa-chevron-right ml-auto"></i>
+                </div>
+                <div id="languageSubmenu" class="hidden">
+                    <div class="dropdown-item" onclick="changeLanguage('en')">
+                        <img src="en.png" alt="English" class="mr-2 flag-icon"> English
+                    </div>
+                    <div class="dropdown-item" onclick="changeLanguage('tr')">
+                        <img src="tr.png" alt="Türkçe" class="mr-2 flag-icon"> Türkçe
+                    </div>
+                    <div class="dropdown-item" onclick="changeLanguage('de')">
+                        <img src="geo.png" alt="Deutsch" class="mr-2 flag-icon"> Deutsch
+                    </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <button class="logout-button" onclick="handleLogout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span id="logoutText">Log Out</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-button active" data-tab="dashboard">
+            <img src="das.png" alt="Dashboard Icon" style="width: 20px; height: 20px; margin-right: 2px;">
+            Dashboard
+        </button>
+        <button class="tab-button" data-tab="rockets">
+            <img src="ros.png" alt="Rockets Icon" style="width: 20px; height: 20px; margin-right: 2px;">
+            Roketler
+        </button>
+        <button class="tab-button" data-tab="users">
+            <img src="kul.png" alt="Users Icon" style="width: 20px; height: 20px; margin-right: 2px;">
+            Kullanıcılar
+        </button>
+        <button class="tab-button" data-tab="settings">
+            <img src="sis.png" alt="Settings Icon" style="width: 20px; height: 20px; margin-right: 2px;">
+            Sistem Ayarları
+        </button>
+    </div>
+
+    <div id="dashboard" class="tab-content active">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-info">
+                        <p>Aktif Roketler</p>
+                        <h3>12</h3>
+                    </div>
+                    <div class="icon-container" style="background-color: rgba(59, 130, 246, 0.2);">
+                        <i data-lucide="rocket" style="color: #3b82f6;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-info">
+                        <p>Toplam Kullanıcı</p>
+                        <h3>156</h3>
+                    </div>
+                    <div class="icon-container" style="background-color: rgba(34, 197, 94, 0.2);">
+                        <i data-lucide="users" style="color: #22c55e;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-info">
+                        <p>Aktif Görevler</p>
+                        <h3>3</h3>
+                    </div>
+                    <div class="icon-container" style="background-color: rgba(234, 179, 8, 0.2);">
+                        <i data-lucide="radio" style="color: #eab308;"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-info">
+                        <p>Sistem Durumu</p>
+                        <h3 style="color: #22c55e;">Normal</h3>
+                    </div>
+                    <div class="icon-container" style="background-color: rgba(147, 51, 234, 0.2);">
+                        <i data-lucide="power" style="color: #9333ea;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-card">
+            <div class="table-header">
+                <i data-lucide="rocket" style="color: #3b82f6;"></i>
+                <h2>Aktif Roketler</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roket ID</th>
+                        <th>Kullanıcı</th>
+                        <th>Konum</th>
+                        <th>Yükseklik</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>SNRC-001</td>
+                        <td>Sencer Roket</td>
+                        <td>28.6090° N, 80.6050° W</td>
+                        <td>123 km</td>
+                        <td><span class="status-badge status-active">Aktif</span></td>
+                        <td><button class="action-button">Yönet</button></td>
+                    </tr>
+                    <tr>
+                        <td>SNRC-002</td>
+                        <td>Test Roket</td>
+                        <td>28.6085° N, 80.6055° W</td>
+                        <td>95 km</td>
+                        <td><span class="status-badge status-test">Test</span></td>
+                        <td><button class="action-button">Yönet</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid-2">
+            <div class="table-card">
+                <div class="table-header">
+                    <i data-lucide="alert-triangle" style="color: #eab308;"></i>
+                    <h2>Sistem Uyarıları</h2>
+                </div>
+                <div class="warning-item">
+                    <i data-lucide="alert-triangle"></i>
+                    <span>GPS sinyali zayıf - SNRC-002</span>
+                </div>
+                <div class="warning-item" style="background-color: rgba(59, 130, 246, 0.1);">
+                    <i data-lucide="bell" style="color: #3b82f6;"></i>
+                    <span>Yazılım güncellemesi mevcut</span>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <i data-lucide="settings" style="color: #9333ea;"></i>
+                    <h2>Hızlı İşlemler</h2>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-button emergency">
+                        <i data-lucide="alert-circle"></i>
+                        Acil Durum Protokolü
+                    </button>
+                    <button class="quick-action-button data">
+                        <i data-lucide="database"></i>
+                        Toplu Veri Kaydı
+                    </button>
+                    <button class="quick-action-button system">
+                        <i data-lucide="check-circle"></i>
+                        Sistem Kontrolü
+                    </button>
+                    <button class="quick-action-button maintenance">
+                        <i data-lucide="tool"></i>
+                        Bakım Modu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rockets" class="tab-content">
+        <div class="table-card">
+            <div class="table-header">
+                <i data-lucide="search" style="color: #22c55e;"></i>
+                <h2>Roket Ara</h2>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Roket ID</label>
+                    <input type="text" placeholder="SNRC-" id="rocket-id">
+                </div>
+                <div class="form-group">
+                    <label>Roket Adı</label>
+                    <input type="text" placeholder="Roket adını girin" id="rocket-name">
+                </div>
+                <div class="form-group">
+                    <label>Durum</label>
+                    <select id="rocket-status">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Test">Test</option>
+                        <option value="Bakım">Bakım</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sorumlu Kullanıcı</label>
+                    <select id="rocket-user">
+                        <option value="">Tüm Kullanıcılar</option>
+                        <option value="Sencer Roket">Sencer Roket</option>
+                        <option value="Test Kullanıcı">Test Kullanıcı</option>
+                    </select>
+                </div>
+            </div>
+            <button class="action-button" onclick="searchRocket()">Roket Ara</button>
+        </div>
+
+        <div class="table-card">
+            <div class="table-header">
+                <i data-lucide="list" style="color: #3b82f6;"></i>
+                <h2>Tüm Roketler</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roket ID</th>
+                        <th>Roket Adı</th>
+                        <th>Sorumlu</th>
+                        <th>Son Görev</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="rocket-table-body">
+                    <tr>
+                        <td>SNRC-001</td>
+                        <td>Sencer-1</td>
+                        <td>Sencer Roket</td>
+                        <td>15.04.2024</td>
+                        <td><span class="status-badge status-active">Aktif</span></td>
+                        <td>
+                            <button class="action-button">Düzenle</button>
+                            <button class="action-button" style="background-color: #dc2626;">Sil</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>SNRC-002</td>
+                        <td>Test Roket</td>
+                        <td>Test Kullanıcı</td>
+                        <td>14.04.2024</td>
+                        <td><span class="status-badge status-test">Test</span></td>
+                        <td>
+                            <button class="action-button">Düzenle</button>
+                            <button class="action-button" style="background-color: #dc2626;">Sil</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>SNRC-003</td>
+                        <td>Sencer-2</td>
+                        <td>Sencer Roket</td>
+                        <td>10.04.2024</td>
+                        <td><span class="status-badge status-offline">Bakım</span></td>
+                        <td>
+                            <button class="action-button">Düzenle</button>
+                            <button class="action-button" style="background-color: #dc2626;">Sil</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="users" class="tab-content">
+        <div class="table-card">
+            <div class="table-header">
+                <i data-lucide="user-plus" style="color: #22c55e;"></i>
+                <h2>Yeni Kullanıcı Ekle</h2>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" placeholder="Kullanıcı adını girin">
+                </div>
+                <div class="form-group">
+                    <label>E-posta</label>
+                    <input type="email" placeholder="E-posta adresini girin">
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select>
+                        <option>Admin</option>
+                        <option>Operator</option>
+                        <option>Gözlemci</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Durum</label>
+                    <select>
+                        <option>Aktif</option>
+                        <option>Pasif</option>
+                    </select>
+                </div>
+            </div>
+            <button class="action-button">Kullanıcı Ekle</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i data-lucide="user" style="width: 1.5rem; height: 1.5rem;"></i>
+                </div>
+                <div class="user-info">
+                    <h3>Sencer Roket</h3>
+                    <p>Admin</p>
+                    <span class="status-badge status-active">Aktif</span>
+                </div>
+            </div>
+
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i data-lucide="user" style="width: 1.5rem; height: 1.5rem;"></i>
+                </div>
+                <div class="user-info">
+                    <h3>Test Kullanıcı</h3>
+                    <p>Operator</p>
+                    <span class="status-badge status-test">Test</span>
+                </div>
+            </div>
+
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i data-lucide="user" style="width: 1.5rem; height: 1.5rem;"></i>
+                </div>
+                <div class="user-info">
+                    <h3>Gözlemci</h3>
+                    <p>Gözlemci</p>
+                    <span class="status-badge status-offline">Pasif</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings" class="tab-content">
+        <div class="grid-2">
+            <div class="table-card">
+                <div class="table-header">
+                    <i data-lucide="settings" style="color: #3b82f6;"></i>
+                    <h2>Genel Ayarlar</h2>
+                </div>
+                <div class="form-group">
+                    <label>Sistem Adı</label>
+                    <input type="text" value="Sencer Yönetim Paneli">
+                </div>
+                <div class="form-group">
+                    <label>Zaman Dilimi</label>
+                    <select>
+                        <option>UTC+03:00 - İstanbul</option>
+                        <option>UTC+00:00 - London</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Veri Yedekleme Sıklığı</label>
+                    <select>
+                        <option>Her Gün</option>
+                        <option>Her Hafta</option>
+                        <option>Her Ay</option>
+                    </select>
+                </div>
+                <button class="action-button">Ayarları Kaydet</button>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <i data-lucide="bell" style="color: #eab308;"></i>
+                    <h2>Bildirim Ayarları</h2>
+                </div>
+                <div class="form-group">
+                    <label>E-posta Bildirimleri</label>
+                    <select>
+                        <option>Açık</option>
+                        <option>Kapalı</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>SMS Bildirimleri</label>
+                    <select>
+                        <option>Açık</option>
+                        <option>Kapalı</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Kritik Uyarılar</label>
+                    <select>
+                        <option>Tümü</option>
+                        <option>Sadece Acil</option>
+                        <option>Kapalı</option>
+                    </select>
+                </div>
+                <button class="action-button">Ayarları Kaydet</button>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <i data-lucide="shield" style="color: #22c55e;"></i>
+                    <h2>Güvenlik Ayarları</h2>
+                </div>
+                <div class="form-group">
+                    <label>İki Faktörlü Doğrulama</label>
+                    <select>
+                        <option>Açık</option>
+                        <option>Kapalı</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Oturum Süresi (dakika)</label>
+                    <input type="number" value="30">
+                </div>
+                <div class="form-group">
+                    <label>IP Kısıtlaması</label>
+                    <select>
+                        <option>Açık</option>
+                        <option>Kapalı</option>
+                    </select>
+                </div>
+                <button class="action-button">Ayarları Kaydet</button>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <i data-lucide="hard-drive" style="color: #9333ea;"></i>
+                    <h2>Sistem Durumu</h2>
+                </div>
+                <div class="form-group">
+                    <p><strong>Son Yedekleme:</strong> 15.04.2024 13:45</p>
+                    <p><strong>Sistem Versiyonu:</strong> 0.0.1.Beta</p>
+                    <p><strong>Sunucu Durumu:</strong> Normal</p>
+                    <p><strong>Veritabanı Boyutu:</strong> 0.3 GB</p>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-button data">
+                        <i data-lucide="refresh-cw"></i>
+                        Sistemi Güncelle
+                    </button>
+                    <button class="quick-action-button system">
+                        <i data-lucide="database"></i>
+                        Yedekleme Oluştur
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rockets" class="tab-content">Rockets Content</div>
+    <div id="users" class="tab-content">Users Content</div>
+    <div id="settings" class="tab-content">Settings Content</div>
+    <script>
+
+        window.addEventListener('load', () => {
+            document.querySelector('.fade-overlay').classList.add('fade-out');
+        });
+
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Aktif tab butonunu güncelle
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+    
+                
+                // Aktif içerik bölümünü göster
+                const tabId = button.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
