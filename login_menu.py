@@ -3,7 +3,7 @@ import pyodbc
 class LoginInterface:
     def __init__(self):
         try:
-            # Bağlantıyı oluştur
+         
             self.connection = pyodbc.connect(
                 'DRIVER={SQL Server};' +
                 'Server=DESKTOP-T5KKBFV;' +
