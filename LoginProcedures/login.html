@@ -225,7 +225,8 @@
 
     <div class="login-container">
         <h1 class="login-title">Sign In</h1>
-        <form id="loginForm">
+        <form id="loginForm" action="{{ url_for('login_interface') }}" method="post">
+
             <div class="input-group">
                 <input type="text" id="username" placeholder="Username" required>
             </div>
@@ -248,6 +249,8 @@
                 <a href="forgot.html">Forgot Password?</a>
             </div>
             <button type="submit" class="login-button">Login</button>
+    
+                
             <div id="errorMessage" class="error-message">Hatalı kullanıcı adı veya şifre!</div>
         </form>
     </div>
