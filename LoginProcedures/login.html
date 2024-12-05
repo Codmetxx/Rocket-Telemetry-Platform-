@@ -15,7 +15,7 @@
         }
 
         body {
-            background-image: url('test1.png');
+            background-image: url("{{ url_for('static', filename='images/test1.png') }}");
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
