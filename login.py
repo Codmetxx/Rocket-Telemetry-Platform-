@@ -48,6 +48,24 @@ class Login:
         
         except pyodbc.Error as ex:
             print("The processes is failed.",ex)
+    def new_user(self, username,password,role):
+        try:
+            check_table="Select Count(*) from login where username=?"
+            self.cursor.execute(check_table,(username,))
+            counter=self.cursor.fetchall()[0]
+            
+            if counter>0:
+                return f"{username} is already exist!"
+            
+            insertion_process=""""
+            Insert into login(username,password,role) values(?,?,?)
+            """
+            self.cursor.execute(insertion_process,(username,password,role))
+            self.connection.commit()
+            print("The user added securely")
+        except pyodbc.Error as ex:
+            print("Error",ex)
+            
         
     def control_check(self, username, password):
         try:
@@ -93,6 +111,16 @@ def admin():
 @app.route("/user")
 def user():
     return render_template("User/user.html")
+@app.route("/new_user",methods=["GET","POST"])
+def new_user():
+    if request.method=="POST":
+        username=request.form.get("username")
+        password=request.form.get("password")
+        role=request.form.get("role")
+        if loginn.new_user(username,password,role):
+            return "The user is added succesfully"
+        return "The user is not added!"
+    return render_template("")
 if __name__ == "__main__":
     app.run(debug=True)
 
