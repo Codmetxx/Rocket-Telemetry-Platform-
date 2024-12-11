@@ -73,7 +73,7 @@ class Login:
               self.cursor.execute(query)
               users=self.cursor.fetchall()
               registered_users=[user.username for user in users]
-              session["registered_users"]=registered_users
+              session["reset_users"]=registered_users
               return registered_users
           return None 
         except pyodbc.Error as ex:
@@ -159,13 +159,23 @@ def forgot_password():
         else:
             return render_template("LoginProcedures/forgot.html",error="The email has not found!")
     return render_template("LoginProcedures/forgot.html")
-@app.route("/new_password",methods=["GET","POST"])
+@app.route("/new_password", methods=["GET", "POST"])
 def new_password():
-    if request.method=="POST":
-        new_password=request.form.get("newPassword")
-        selected_user = request.form.get("selected_user")
-        registered_users=session.get("registered_users",[])
-        if selec
+    if request.method == "POST":
+        new_password = request.form.get("newPassword")
+        reset_users = session.get("reset_users", [])
+        
+        success = True
+        for user_name in reset_users:
+            if not loginn.update(user_name, new_password):
+                success = False
+        if success:
+            return redirect(url_for("home"))
+        else:
+            return render_template("LoginProcedures/new_password.html", 
+                                error="The password has not changed!")
+    
+    return render_template("LoginProcedules/new_password.html")
 if __name__ == "__main__":
     app.run(debug=True)
 

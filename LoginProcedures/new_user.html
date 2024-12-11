@@ -2,115 +2,278 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Yeni Kullanıcı Ekle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Login sayfanızdan aldığımız stil kodlarını buraya da ekleyebilirsiniz */
-        .user-form {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-image: url("{{ url_for('static', filename='images/test1.png') }}");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            background-color: #1a1a1a;
+        }
+
+        .login-container {
             width: 100%;
             max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
+            padding: 2rem;
+            text-align: center;
         }
-        
-        .form-group {
-            margin-bottom: 15px;
+
+        .login-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
         }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
+
+        .input-group {
+            margin-bottom: 1rem;
+            position: relative;
         }
-        
+
         input, select {
             width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
+            padding: 1rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: background-color 0.3s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 40px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        select option {
+            background-color: #333;
+            color: white;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(94, 94, 94, 1);
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+            font-weight: bold;
         }
-        
-        button:hover {
-            background-color: #45a049;
+
+        .login-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
         }
-        
+
+        .back-link {
+            margin-top: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
         .message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 4px;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 5px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
         }
-        
+
         .success {
-            background-color: #dff0d8;
-            color: #3c763d;
+            background-color: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
         }
-        
+
         .error {
-            background-color: #f2dede;
-            color: #a94442;
+            background-color: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .password-toggle:hover {
+            color: white;
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 1;
+            z-index: 999;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        .fade-overlay.fade-out {
+            opacity: 0;
         }
     </style>
 </head>
 <body>
-    <div class="user-form">
-        <h2>Yeni Kullanıcı Ekle</h2>
-        <form id="addUserForm" method="POST" action="{{ url_for('add_user') }}">
-            <div class="form-group">
-                <label for="username">Kullanıcı Adı:</label>
-                <input type="text" id="username" name="username" required>
+    <div class="fade-overlay"></div>
+
+    <div class="login-container">
+        <h1 class="login-title">Create Account</h1>
+        <form id="addUserForm" method="POST" action="{{ url_for('new_user') }}">
+            <div class="input-group">
+                <input type="text" id="username" name="username" placeholder="Username" required>
             </div>
-            
-            <div class="form-group">
-                <label for="password">Şifre:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="role">Rol:</label>
+
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-off" style="display: none;">
+                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                        <line x1="2" x2="22" y1="2" y2="22"></line>
+                    </svg>
+                </button>
+            </div>            
+
+            <div class="input-group">
                 <select id="role" name="role" required>
-                    <option value="user">Kullanıcı</option>
-                    <option value="admin">Yönetici</option>
+                    <option value="" disabled selected>Role</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
                 </select>
             </div>
-            
-            <button type="submit">Kullanıcı Ekle</button>
+
+            <button type="submit" class="login-button">Sign Up</button>
         </form>
-        <div id="message" class="message" style="display: none;"></div>
+        {% if error %}
+        <div class="message error" style="display: block;">{{ error }}</div>
+        {% endif %}
+        <div id="message" class="message"></div>
+        <div class="back-link">
+            <a href="{{ url_for('home') }}">Return to Sign In</a>
+        </div>
     </div>
 
     <script>
+        window.addEventListener('load', function() {
+            document.querySelector('.fade-overlay').classList.add('fade-out');
+        });
+
         document.getElementById('addUserForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
-            
-            fetch('/add_user', {
+
+            fetch('{{ url_for("new_user") }}', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.text())
-            .then(data => {
-                const messageDiv = document.getElementById('message');
-                messageDiv.style.display = 'block';
-                messageDiv.textContent = data;
-                messageDiv.className = 'message ' + (data.includes('başarıyla') ? 'success' : 'error');
-                
-                if(data.includes('başarıyla')) {
+            .then(response => {
+                if (response.ok) {
+                    const messageDiv = document.getElementById('message');
+                    messageDiv.style.display = 'block';
+                    messageDiv.textContent = 'Registration successful!';
+                    messageDiv.className = 'message success';
+
                     this.reset();
+                    setTimeout(() => {
+                        window.location.href = '{{ url_for("home") }}';
+                    }, 2000);
+                } else {
+                    const messageDiv = document.getElementById('message');
+                    messageDiv.style.display = 'block';
+                    messageDiv.textContent = 'User could not be added or already exists!';
+                    messageDiv.className = 'message error';
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('message').textContent = 'Bir hata oluştu!';
+                const messageDiv = document.getElementById('message');
+                messageDiv.style.display = 'block';
+                messageDiv.textContent = 'Registration failed. Please try again.';
+                messageDiv.className = 'message error';
             });
+        });
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        const eyeIcon = togglePassword.querySelector('.eye');
+        const eyeOffIcon = togglePassword.querySelector('.eye-off');
+
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            
+            eyeIcon.style.display = type === 'password' ? 'block' : 'none';
+            eyeOffIcon.style.display = type === 'password' ? 'none' : 'block';
         });
     </script>
 </body>
