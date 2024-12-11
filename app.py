@@ -1,5 +1,5 @@
 import pyodbc
-from flask import Flask ,render_template,request,redirect
+from flask import Flask ,render_template,request,redirect,url_for,session
 
 class Login:
     def __init__(self):
@@ -7,7 +7,7 @@ class Login:
             
             self.connection = pyodbc.connect(
                 'DRIVER={SQL Server};' +
-                'Server=DESKTOP-K8LPTJ0;' +
+                'Server=DESKTOP-T5KKBFV;' +
                 'Database=master;' +  
                 'Trusted_Connection=True'
             )
@@ -66,8 +66,33 @@ class Login:
         except pyodbc.Error as ex:
             print("Error",ex)
             return False 
+    def check_email(self,email):
+        try:
+          if email=="123@gmail.com":
+              query="Select username from login"
+              self.cursor.execute(query)
+              users=self.cursor.fetchall()
+              registered_users=[user.username for user in users]
+              session["reset_users"]=registered_users
+              return registered_users
+          return None 
+        except pyodbc.Error as ex:
+            print("Error:",ex)
+            return None
+    def update(self,username,new_password):
+        try:
+            update_query=""" 
+            Update login Set password=? where username=?
+            """
+            self.cursor.execute(update_query,(new_password,username))
+            self.connection.commit()
+            return True
+        except pyodbc.Error as ex:
+            print("Error:",ex)
+            return False 
             
-        
+            
+                 
     def control_check(self, username, password):
         try:
             sql = "SELECT * FROM login WHERE username=? AND password=?"
@@ -124,6 +149,33 @@ def new_user():
             return render_template("LoginProcedures/new_user.html",error="The user is not added or is already exsists")
        
     return render_template("LoginProcedures/new_user.html")
+@app.route("/forgot_password",methods=["GET","POST"])
+def forgot_password():
+    if request.method=="POST":
+        email=request.form.get("email")
+        users=loginn.check_email(email)
+        if users:
+            return redirect(url_for("new_password"))
+        else:
+            return render_template("LoginProcedures/forgot.html",error="The email has not found!")
+    return render_template("LoginProcedures/forgot.html")
+@app.route("/new_password", methods=["GET", "POST"])
+def new_password():
+    if request.method == "POST":
+        new_password = request.form.get("newPassword")
+        reset_users = session.get("reset_users", [])
+        
+        success = True
+        for user_name in reset_users:
+            if not loginn.update(user_name, new_password):
+                success = False
+        if success:
+            return redirect(url_for("home"))
+        else:
+            return render_template("LoginProcedures/new_password.html", 
+                                error="The password has not changed!")
+    
+    return render_template("LoginProcedules/new_password.html")
 if __name__ == "__main__":
     app.run(debug=True)
 
