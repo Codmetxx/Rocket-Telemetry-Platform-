@@ -124,7 +124,7 @@ def home():
 def login_interface():
     username=request.form.get("username")
     password=request.form.get("password")
-    user=loginn.control_check(username,password)
+    user=loginn.control_check(username,password) 
     
     if user["flag"]:
         if user["role"]=="admin":
