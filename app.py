@@ -8,7 +8,7 @@ class Login:
         try:
             self.connection = pyodbc.connect(
                 'DRIVER={SQL Server};' +
-                'Server=DESKTOP-T5KKBFV;' +
+                'Server=DESKTOP-K8LPTJ0;' +
                 'Database=master;' +  
                 'Trusted_Connection=True'
             )
@@ -104,48 +104,71 @@ class Login:
             return False
     def create_projects_table(self):
         try:
-            new_query="""
-            Drop table if exists projects;
-            create table projects(
-                id int identity(1,1) Primary Key,
-                username varchar(50),
-                project_name varchar(50),
-                rover_name varchar(50),
+            new_query = """
+            DROP TABLE IF EXISTS projects;
+            CREATE TABLE projects(
+                id INT IDENTITY(1,1) PRIMARY KEY,
+                username VARCHAR(50),
+                project_name VARCHAR(50),
+                rocket_name VARCHAR(50),
+                rocket_image VARBINARY(MAX),
+                payload_name VARCHAR(50),
+                payload_image VARBINARY(MAX),
+                country VARCHAR(50),
+                city VARCHAR(50),
+                district VARCHAR(50),
                 timestamp DATETIME DEFAULT GETDATE(),
-                foreign key(username) references login(username) ON DELETE CASCADE
-                
+                FOREIGN KEY(username) REFERENCES login(username) ON DELETE CASCADE
             );
-            
-            
             """
             self.cursor.execute(new_query)
             self.connection.commit()
             print("projects table is created")
             return True
         except pyodbc.Error as ex:
-            print("Error:",ex)
+            print("Error:", ex)
             return False
-    def projects_insertion(self,username,project_name,rover_name):
+    
+    def projects_insertion(self, username, project_data):
         try:
-            new_query="""
-            Select count(*) from projects where username=?
-           
+            new_query = """
+            SELECT count(*) FROM projects WHERE username=?
             """
-            self.cursor.execute(new_query,(username,))
+            self.cursor.execute(new_query, (username,))
             project_count = self.cursor.fetchone()[0]
-            if project_count<10:
-                insert_newproject="""
-                Insert into projects(username,project_name,rover_name) values(?,?,?)
+            
+            if project_count < 10:
+                insert_newproject = """
+                INSERT INTO projects(
+                    username, project_name, rocket_name, rocket_image,
+                    payload_name, payload_image, country, city, district
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
-                self.cursor.execute(insert_newproject,(username,project_name,rover_name))
+                self.cursor.execute(
+                    insert_newproject,
+                    (
+                        username,
+                        project_data['project_name'],
+                        project_data['rocket_name'],
+                        project_data['rocket_image'],
+                        project_data['payload_name'],
+                        project_data['payload_image'],
+                        project_data['country'],
+                        project_data['city'],
+                        project_data['district']
+                    )
+                )
                 self.connection.commit()
                 return True
             else:
-                print("You reached to maximum project number!")
+                print("You reached the maximum project number!")
                 return False
         except pyodbc.Error as ex:
-            print("Error:",ex)
+            print("Error:", ex)
             return False
+        
+    
+  
     def project_details(self,username,id):
         try:
             new_query="""
@@ -158,8 +181,19 @@ class Login:
             print("Error:",ex)
             return False
             
+    def delete_project(self, project_id, username):
+        try:
+            query = """
+            DELETE FROM projects 
+            WHERE id = ? AND username = ?
+            """
+            self.cursor.execute(query, (project_id, username))
+            self.connection.commit()
+            return True
+        except pyodbc.Error as ex:
+            print("Error:", ex)
+            return False
             
-      
     
     def create_interfacetable(self):
         try:
@@ -269,8 +303,20 @@ def admin():
 def user():
     if "username" not in session:
         return redirect(url_for("login_interface"))
-    username=session["username"]
-    return render_template("User/user.html",username=username)
+    username = session["username"]
+    try:
+        query = """
+        SELECT id, project_name 
+        FROM projects 
+        WHERE username = ?
+        """
+        loginn.cursor.execute(query, (username,))
+        projects = loginn.cursor.fetchall()
+        project_list = [{"id": p[0], "name": p[1]} for p in projects]
+        return render_template("user.html", username=username, projects=project_list)
+    except Exception as e:
+        print("Error:", e)
+        return render_template("user.html", username=username, projects=[])
 
 @app.route("/new_user", methods=["GET", "POST"])
 def new_user():
@@ -350,16 +396,53 @@ def get_projects():
     except Exception as ex:
         print("Erro:",ex)
         return jsonify([])
-@app.route("/add_project",methods=["POST"])
+
+@app.route("/add_project", methods=["POST"])
 def add_project():
     if "username" not in session:
-        return jsonify([])
-    username=session["username"]
-    project_name=request.form.get("project_name")
-    rover_name=request.form.get("rover_name")
-    if loginn.projects_insertion(username,project_name,rover_name):
-        return jsonify({"flag":True,"message":"The project has added successfully."})
-    return jsonify({"flag":False,"message":"Error!"})
+        return jsonify({"flag": False, "message": "Not authorized"})
+        
+    try:
+        username = session["username"]
+        
+        project_data = {
+            'project_name': request.form.get('project_name'),
+            'rocket_name': request.form.get('rocket_name'),
+            'rocket_image': request.files['rocket_image'].read() if 'rocket_image' in request.files else None,
+            'payload_name': request.form.get('payload_name'),
+            'payload_image': request.files['payload_image'].read() if 'payload_image' in request.files else None,
+            'country': request.form.get('country'),
+            'city': request.form.get('city'),
+            'district': request.form.get('district')
+        }
+        
+        if loginn.projects_insertion(username, project_data):
+            return jsonify({"flag": True, "message": "Project added successfully."})
+        return jsonify({"flag": False, "message": "Failed to add project"})
+        
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({"flag": False, "message": str(e)})
+
+@app.route("/delete_project/<int:project_id>", methods=["DELETE"])
+def delete_project(project_id):
+    if "username" not in session:
+        return jsonify({"success": False, "message": "Not authorized"})
+    
+    username = session["username"]
+    success = loginn.delete_project(project_id, username)
+    
+    return jsonify({"success": success})
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    try:
+        session.clear()
+        return jsonify({'success': True})
+    except Exception as e:
+        print(f"Logout error: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route("/interface", methods=["GET", "POST"])
 def interface():
     if 'username' not in session:
@@ -367,25 +450,35 @@ def interface():
         
     username = session["username"]
     project_id = request.args.get("id")
-    if request.method == "POST":
-        try:
-            rocket_data = request.get_json()
-            rocket_data["username"] = username
-            rocket_data["project_id"] = project_id
-            success = loginn.rocketdata_insertion(rocket_data)
+    
+    try:
+        user_query = """
+        SELECT id, username FROM login WHERE username = ?
+        """
+        project_query = """
+        SELECT project_name, rocket_name FROM projects 
+        WHERE id = ? AND username = ?
+        """
+        
+        loginn.cursor.execute(user_query, (username,))
+        user_data = loginn.cursor.fetchone()
+        
+        loginn.cursor.execute(project_query, (project_id, username))
+        project_data = loginn.cursor.fetchone()
+        
+        if user_data and project_data:
+            return render_template(
+                "Interface/Interface.html",
+                username=username,
+                user_id=str(user_data[0]).zfill(6), 
+                project_name=project_data[0],
+                rocket_name=project_data[1]
+            )
             
-            return jsonify({"success": success})
-        except Exception as ex:
-            print("Error:", ex)
-            return jsonify({"success": False, "error": ex})
+    except Exception as e:
+        print("Error:", e)
         
-    project_details = loginn.project_details(username, project_id)
-    if project_details:
-        return render_template("Interface/Interface.html",username=username,project_name=project_details[0],rover_name=project_details[1])
     return redirect(url_for('user'))
-
-        
-
 
 if __name__ == "__main__":
     app.run(debug=True)

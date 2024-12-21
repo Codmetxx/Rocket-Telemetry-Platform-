@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roket Takip Paneli</title>
+    <title>Project Panel | Senith</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='%23cacaca' d='M12.997 10.755a7 7 0 0 0-.997-.083c-.111 0-.497.008-.998.083c-2.919.438-4.948 2.08-6.201 4.695c-.641 1.336-.357 2.255.8 3.166l.205.158q.32.214.627.414c3.026 1.975 4.133 2.676 4.58 2.881c.186.085.512.244.962.255h.048c.45-.011.777-.17.963-.255c.446-.205 1.553-.907 4.579-2.882q.308-.2.629-.415l.203-.156c1.157-.911 1.441-1.83.8-3.166c-1.251-2.614-3.281-4.257-6.2-4.695m7.252 4.36c.637.774 1.205.834 1.843.387c.85-.597 1.894-2.857 1.908-4.724c-.05-5.112-5.337-8.666-10.648-9.093c-.212-.02-.534-.026-.777.153c-.247.182-.292.457-.113.812c.305.603.708 1.147 1.092 1.7c1.928 2.77 3.56 5.72 5.298 8.607c.442.734.85 1.492 1.397 2.157zM5.148 12.956c1.738-2.886 3.37-5.837 5.297-8.607c.385-.553.787-1.097 1.092-1.7c.18-.355.135-.63-.113-.812c-.243-.18-.565-.173-.777-.153C5.337 2.112.05 5.665 0 10.778c.013 1.867 1.057 4.128 1.908 4.724c.638.447 1.206.387 1.843-.388c.546-.665.954-1.423 1.397-2.157Z'/></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -16,7 +17,7 @@
         }
 
         body {
-            background-image: url('arka1.png');
+            background-image: url("{{ url_for('static', filename='images/arka1.png') }}");
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -26,7 +27,6 @@
             padding: 1.5rem;
         }
 
-        /* Header Styles */
         .header {
             padding: 1rem;
             border-radius: 0.75rem;
@@ -42,16 +42,9 @@
             color: #bcbcbc;
         }
 
-        .header-weather {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.4rem;
-            color: #bcbcbc;
-        }
-
-        .header-weather span {
-            font-size: 1.4rem;
+        .header-date {
+            font-size: 1.5rem;
+            font-weight: 400;
             color: #bcbcbc;
         }
 
@@ -121,14 +114,18 @@
         .panel2 {
             background: linear-gradient(
                 45deg,
-                rgba(129, 0, 0, 1),
+                rgba(0, 0, 0, 0.8),
                 rgba(217, 217, 217, 0.5)
             );
             padding: 1.5rem;
             border-radius: 0.75rem;
-            height: fit-content;
-            min-height: 120px;
+            height: 125px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
         }
 
         .panel3 {
@@ -217,16 +214,6 @@
             display: flex;
             flex-direction: column;
             margin-bottom: 1rem;
-        }
-
-        .rover-status {
-            background-color: rgba(94, 94, 94, 0.8);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            height: auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .panel:nth-child(2) .card:nth-child(2) {
@@ -618,175 +605,131 @@
         <div class="countdown-number" id="countdown-number"></div>
     </div>
     <div class="header">
-        <div class="header-clock" id="current-clock">23:13:59.00</div>
-        <div class="header-weather">
-            <div class="weather-icon-container">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21.6675 9.04038C20.0788 7.19583 17.8937 6.17716 15.5133 6.17716C14.7633 6.17716 13.9872 6.27616 13.1954 6.46895C14.1669 5.34868 15.4795 4.78333 17.1124 4.78333C19.3861 4.78333 21.8003 5.92966 23.1833 7.06557C23.2848 7.14894 23.4333 7.14372 23.527 7.05254C23.6234 6.96135 23.6364 6.81546 23.5583 6.70864C21.9149 4.48372 18.9798 3.04559 16.0759 3.04559C13.172 3.04559 10.5754 4.53061 8.93463 7.24533C8.85389 6.06774 9.17423 4.97612 9.89565 3.99653C11.3958 1.95918 14.3283 0.807642 16.4171 0.601824C16.5473 0.588797 16.6488 0.48198 16.6514 0.34911C16.6541 0.218845 16.5603 0.104212 16.4301 0.0859748C16.0524 0.0286583 15.6592 0 15.2581 0C12.3412 0 9.37217 1.48502 7.69754 3.78289C6.6636 5.20017 5.6583 7.53712 6.46827 10.8094C5.57756 10.033 5.03585 9.03517 4.85094 7.83152C4.4707 5.33044 5.73122 2.44116 7.06467 0.818063C7.14801 0.716457 7.14281 0.567955 7.05165 0.474164C6.9605 0.377768 6.81465 0.364742 6.70787 0.442901C4.28579 2.23274 2.82472 5.51802 3.07474 8.61832C3.29091 11.2992 4.76239 13.5632 7.24698 15.0716C7.12718 15.0795 7.00738 15.0847 6.89018 15.0847C3.10339 15.0847 0.900074 10.6088 0.603173 7.58402C0.590151 7.45376 0.483371 7.35215 0.350547 7.34954C0.215118 7.33912 0.105734 7.44073 0.0875028 7.57099C-0.290134 10.0825 0.57192 12.9145 2.3377 14.9648C3.92638 16.8094 6.11147 17.828 8.49188 17.828C9.24195 17.828 10.0207 17.729 10.8098 17.5337C9.83835 18.6539 8.52574 19.2193 6.89278 19.2193C4.61915 19.2193 2.20487 18.0729 0.821942 16.937C0.720371 16.8537 0.57192 16.8589 0.478162 16.9501C0.381799 17.0413 0.371382 17.1871 0.446909 17.294C2.09028 19.5189 5.02543 20.957 7.92933 20.957C10.8332 20.957 13.4298 19.472 15.0706 16.7573C15.1513 17.9349 14.831 19.0265 14.107 20.0061C12.6068 22.0434 9.67428 23.1924 7.58555 23.3982C7.45533 23.4112 7.35376 23.518 7.35116 23.6509C7.34855 23.7812 7.44231 23.8958 7.57253 23.914C7.95017 23.9713 8.34604 24 8.74451 24C11.6614 24 14.6304 22.515 16.3051 20.2171C17.339 18.7998 18.3443 16.4655 17.5343 13.1932C18.425 13.967 18.9668 14.9674 19.1491 16.1711C19.5293 18.6722 18.2688 21.5588 16.9353 23.1845C16.852 23.2861 16.8572 23.4347 16.9483 23.5284C17.0395 23.6248 17.1853 23.6379 17.2921 23.5597C19.7142 21.7699 21.1753 18.4846 20.9253 15.3843C20.7091 12.706 19.2376 10.4394 16.753 8.93096C16.8728 8.92314 16.99 8.91793 17.1072 8.91793C20.894 8.91793 23.0973 13.3938 23.3942 16.4186C23.4072 16.5488 23.514 16.6505 23.6468 16.6531C23.7771 16.6531 23.8917 16.5619 23.9125 16.4316C24.2901 13.9201 23.4281 11.0881 21.6623 9.03778L21.6675 9.04038Z" fill="#BCBCBC"/>
-                </svg>
-                <span>25°C</span>
-            </div>
-            <div class="location-icon-container">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
-                    <path fill="#bcbcbc" d="M17.657 5.304c-3.124-3.073-8.189-3.073-11.313 0a7.78 7.78 0 0 0 0 11.13L12 21.999l5.657-5.565a7.78 7.78 0 0 0 0-11.13M12 13.499c-.668 0-1.295-.26-1.768-.732a2.503 2.503 0 0 1 0-3.536c.472-.472 1.1-.732 1.768-.732s1.296.26 1.768.732a2.503 2.503 0 0 1 0 3.536c-.472.472-1.1.732-1.768.732"/>
-                </svg>
-                <span>Ankara, Türkiye</span>
-            </div>
-        </div>
+        <div class="header-clock" id="current-clock">00:00:00</div>
+        <div class="header-date" id="current-date">20 Aralık 2024</div>
     </div>
 
     <div class="dashboard-grid">
         <div class="info-panel">
             <div class="panel1">
                 <div class="title">
-                    <h1>Merhaba</h1>
-                    <h2>Sencer</h2>
-                    <p>ID: 000001</p>
+                    <h1>Hello</h1>
+                    <h2>{{ username }}</h2>
+                    <p>ID: {{ user_id }}</p>
                 </div>
             </div>
             <div class="panel1">
                 <div class="panel2">
-                    <div class="weather-content">
-                        <div class="weather-brand-container">
-                            <div class="weather-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M21.6675 9.04038C20.0788 7.19583 17.8937 6.17716 15.5133 6.17716C14.7633 6.17716 13.9872 6.27616 13.1954 6.46895C14.1669 5.34868 15.4795 4.78333 17.1124 4.78333C19.3861 4.78333 21.8003 5.92966 23.1833 7.06557C23.2848 7.14894 23.4333 7.14372 23.527 7.05254C23.6234 6.96135 23.6364 6.81546 23.5583 6.70864C21.9149 4.48372 18.9798 3.04559 16.0759 3.04559C13.172 3.04559 10.5754 4.53061 8.93463 7.24533C8.85389 6.06774 9.17423 4.97612 9.89565 3.99653C11.3958 1.95918 14.3283 0.807642 16.4171 0.601824C16.5473 0.588797 16.6488 0.48198 16.6514 0.34911C16.6541 0.218845 16.5603 0.104212 16.4301 0.0859748C16.0524 0.0286583 15.6592 0 15.2581 0C12.3412 0 9.37217 1.48502 7.69754 3.78289C6.6636 5.20017 5.6583 7.53712 6.46827 10.8094C5.57756 10.033 5.03585 9.03517 4.85094 7.83152C4.4707 5.33044 5.73122 2.44116 7.06467 0.818063C7.14801 0.716457 7.14281 0.567955 7.05165 0.474164C6.9605 0.377768 6.81465 0.364742 6.70787 0.442901C4.28579 2.23274 2.82472 5.51802 3.07474 8.61832C3.29091 11.2992 4.76239 13.5632 7.24698 15.0716C7.12718 15.0795 7.00738 15.0847 6.89018 15.0847C3.10339 15.0847 0.900074 10.6088 0.603173 7.58402C0.590151 7.45376 0.483371 7.35215 0.350547 7.34954C0.215118 7.33912 0.105734 7.44073 0.0875028 7.57099C-0.290134 10.0825 0.57192 12.9145 2.3377 14.9648C3.92638 16.8094 6.11147 17.828 8.49188 17.828C9.24195 17.828 10.0207 17.729 10.8098 17.5337C9.83835 18.6539 8.52574 19.2193 6.89278 19.2193C4.61915 19.2193 2.20487 18.0729 0.821942 16.937C0.720371 16.8537 0.57192 16.8589 0.478162 16.9501C0.381799 17.0413 0.371382 17.1871 0.446909 17.294C2.09028 19.5189 5.02543 20.957 7.92933 20.957C10.8332 20.957 13.4298 19.472 15.0706 16.7573C15.1513 17.9349 14.831 19.0265 14.107 20.0061C12.6068 22.0434 9.67428 23.1924 7.58555 23.3982C7.45533 23.4112 7.35376 23.518 7.35116 23.6509C7.34855 23.7812 7.44231 23.8958 7.57253 23.914C7.95017 23.9713 8.34604 24 8.74451 24C11.6614 24 14.6304 22.515 16.3051 20.2171C17.339 18.7998 18.3443 16.4655 17.5343 13.1932C18.425 13.967 18.9668 14.9674 19.1491 16.1711C19.5293 18.6722 18.2688 21.5588 16.9353 23.1845C16.852 23.2861 16.8572 23.4347 16.9483 23.5284C17.0395 23.6248 17.1853 23.6379 17.2921 23.5597C19.7142 21.7699 21.1753 18.4846 20.9253 15.3843C20.7091 12.706 19.2376 10.4394 16.753 8.93096C16.8728 8.92314 16.99 8.91793 17.1072 8.91793C20.894 8.91793 23.0973 13.3938 23.3942 16.4186C23.4072 16.5488 23.514 16.6505 23.6468 16.6531C23.7771 16.6531 23.8917 16.5619 23.9125 16.4316C24.2901 13.9201 23.4281 11.0881 21.6623 9.03778L21.6675 9.04038Z" fill="#BCBCBC"/>
-                                </svg>
-                            </div>
-                            <div class="weather-brand">
-                                <span class="brand-name">SencerWeather</span>
-                            </div>
-                        </div>
-                        <div class="weather-status">
-                            <div class="status-container">
-                                <div class="status-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 16 16">
-                                        <path fill="#bcbcbc" d="M8 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 8 1m0 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6m6.5-2.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zM8 13a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 8 13M2.5 8.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zm.646-5.354a.5.5 0 0 1 .708 0l1 1a.5.5 0 1 1-.708.708l-1-1a.5.5 0 0 1 0-.708m.708 9.708a.5.5 0 1 1-.708-.707l1-1a.5.5 0 0 1 .708.707zm9-9.708a.5.5 0 0 0-.708 0l-1 1a.5.5 0 0 0 .708.708l1-1a.5.5 0 0 0 0-.708m-.708 9.708a.5.5 0 0 0 .708-.707l-1-1a.5.5 0 0 0-.708.707z"/>
-                                    </svg>
-                                </div>
-                                <span class="status-text">Hava Güneşli</span>
-                            </div>
-                        </div>
-                        <div class="weather-message">
-                            Uçuşa uygun elverişli hava.
-                        </div>
-                    </div>
+                    <img src="{{ url_for('static', filename='images/rvr.png') }}" alt="Rover Status" class="rover-image">
                 </div>
                 <div class="panel3">
                     <svg class="background-line" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 2">
                         <line x1="40" y1="1" x2="360" y2="1" stroke="#bcbcbc" stroke-width="2"/>
                     </svg>
-                    <img src="rck.png" alt="Roket" class="rocket-img">
+                    <img src="{{ url_for('static', filename='images/rck.png') }}" alt="Roket" class="rocket-img">
                 </div>
             </div>
         </div>
 
         <div class="panel">
-            <h2 class="panel-title">Roket Takip</h2>
-            <div class="card-grid">
-                <!-- Anlık GPS Verileri -->
-                <div class="card">
-                    <h3 class="card-title">Anlık GPS Verileri</h3>
-                    <div class="data-row">
-                        <span class="data-label">Zaman:</span>
-                        <span class="data-value" id="current-time">T+00:00:00</span>
+            <h2 class="panel-title">Rocket Tracking</h2>
+                <div class="card-grid">
+                    <!-- Anlık GPS Verileri -->
+                    <div class="card">
+                        <h3 class="card-title">Real-time GPS Data</h3>
+                        <div class="data-row">
+                            <span class="data-label">Time:</span>
+                            <span class="data-value" id="current-time">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Latitude:</span>
+                            <span class="data-value" id="current-latitude">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Longitude:</span>
+                            <span class="data-value" id="current-longitude">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Altitude:</span>
+                            <span class="data-value" data-type="height">-</span>
+                        </div>
                     </div>
-                    <div class="data-row">
-                        <span class="data-label">Enlem:</span>
-                        <span class="data-value" id="current-latitude">0.0000° N</span>
+            
+                    <div class="card">
+                        <h3 class="card-title">GPS Data</h3>
+                        <div class="gps-history">
+                            <div>No Data</div>
+                        </div>
                     </div>
-                    <div class="data-row">
-                        <span class="data-label">Boylam:</span>
-                        <span class="data-value" id="current-longitude">0.0000° E</span>
+            
+                    <div class="card">
+                        <h3 class="card-title">Telemetry Data</h3>
+                        <div class="data-row">
+                            <span class="data-label">Speed:</span>
+                            <span class="data-value" data-type="speed">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Acceleration:</span>
+                            <span class="data-value" data-type="acceleration">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Temperature:</span>
+                            <span class="data-value" data-type="temperature">-</span>
+                        </div>
                     </div>
-                    <div class="data-row">
-                        <span class="data-label">Yükseklik:</span>
-                        <span class="data-value" data-type="height">0 km</span>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <h3 class="card-title">GPS Verileri</h3>
-                    <div class="gps-history">
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">Telemetri Verileri</h3>
-                    <div class="data-row">
-                        <span class="data-label">Hız:</span>
-                        <span class="data-value" data-type="speed">0 KM/H</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">İvme:</span>
-                        <span class="data-value" data-type="acceleration">0 G</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Sıcaklık:</span>
-                        <span class="data-value" data-type="temperature">15°C</span>
-                    </div>
-                </div>
-
-                <div class="card timer-card">
+                <div class="timer-card">
                     <div class="timer-value" id="mission-timer">T+00:00:00</div>
-                    <div class="timer-label">SNC-A1 Uçuş Testi</div>
+                    <div class="timer-label">{{ rocket_name }} Flight Test</div>
                     <div class="timer-controls">
                         <button class="timer-btn reset-btn" id="startBtn">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            Başlat
+                            Start
                         </button>
                         <button class="timer-btn pause-btn" id="pauseBtn">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m-9-3a9 9 0 1118 0 9 9 0 01-18 0z" />
                             </svg>
-                            Duraklat
+                            Pause
                         </button>
                         <button class="timer-btn reset-btn" id="resetBtn">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            Sıfırla
+                            Reset
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
+    <!-- Payload Tracking section -->
         <div class="panel">
-            <h2 class="panel-title">Rover Takip</h2>
+            <h2 class="panel-title">Payload Tracking</h2>
             
-            <!-- GPS Verileri -->
             <div class="rover-card">
-                <h3 class="card-title">GPS Verileri</h3>
+                <h3 class="card-title">GPS Data</h3>
                 <div class="gps-history1">
-                    <div>T+00:06:00 - 29.610° N - 80.5985° W, 105 km</div>
-                    <div>T+00:05:00 - 28.605° N - 81.6085° W, 100 km</div>
-                    <div>T+00:04:00 - 27.600° N - 82.6185° W, 95 km</div>
-                    <div>T+00:03:00 - 26.615° N - 83.6005° W, 90 km</div>
-                    <div>T+00:02:00 - 25.620° N - 84.5925° W, 85 km</div>
-                    <div>T+00:01:00 - 24.625° N - 85.5845° W, 80 km</div>
-                    <div>T+00:00:00 - 23.630° N - 86.5765° W, 75 km</div>
+                    <div>No Data</div>
                 </div>
             </div>
         
             <div class="rover-info">
-                <h3 class="card-title">Rover Bilgileri</h3>
+                <h3 class="card-title">Payload Information</h3>
                 <div class="data-row">
-                    <span class="data-label">Şarj Durumu:</span>
-                    <span class="charge-status">%100</span>
+                    <span class="data-label">Battery Status:</span>
+                    <span id="battery-status" class="charge-status">-</span>
                 </div>
                 <div class="data-row">
-                    <span class="data-label">Sıcaklık ve Nem:</span>
-                    <span class="data-value" data-type="temperature">15°C</span>
+                    <span class="data-label">Temperature and Humidity:</span>
+                    <span id="temp-humidity" class="data-value">-</span>
                 </div>
             </div>
+        </div>
         
-            <div class="rover-status">
-                <img src="rvr.png" alt="Rover Status" class="rover-image">
-            </div>
         <div class="nav-buttons">
             <button class="nav-button back-button" onclick="handleBack()" title="Geri Dön">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -998,23 +941,38 @@
             pause: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m-9-3a9 9 0 1118 0 9 9 0 01-18 0z" />
                 </svg>
-                Duraklat`
+                Pause`
         };
 
         function handleLogout() {
-            window.location.href = '../LoginProcedures/login.html';
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+            });
         }
 
         function handleBack() {
-            window.location.href = '../User/user.html';
+            window.location.href = '/user';
         }
 
         function calculatePosition(second, altitude, speed) {
-            const maxAltitudeTime = 70; // 70. saniyede maksimum yüksekliğe ulaşıyor
-            const totalFlightTime = 170; // Toplam uçuş süresi
-            const parachuteOpenTime = maxAltitudeTime; // Paraşütün açılma zamanı
-            const parachuteDuration = 4; // Paraşüt açılma sonrası sallanma süresi
-
+            const maxAltitudeTime = 70; 
+            const totalFlightTime = 170; 
+            const parachuteOpenTime = maxAltitudeTime; 
+            const parachuteDuration = 4; 
             let angle;
 
             if (second === 0) {
@@ -1065,9 +1023,20 @@
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = now.getMonth(); 
+            const year = now.getFullYear();
+            
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
 
             document.getElementById('current-clock').textContent = 
                 `${hours}:${minutes}:${seconds}`;
+            document.getElementById('current-date').textContent = 
+                `${day} ${monthNames[month]} ${year}`;
         }
 
 
@@ -1100,20 +1069,33 @@
                     document.querySelector('[data-type="acceleration"]').textContent = `${data.acceleration} G`;
                     document.querySelector('[data-type="temperature"]').textContent = `${data.temperature}°C`;
 
-                    const gpsHistory = document.querySelector('.gps-history');
-                    const newEntry = document.createElement('div');
-                    const timeString = `T+${String(Math.floor(second / 3600)).padStart(2, '0')}:${String(Math.floor((second % 3600) / 60)).padStart(2, '0')}:${String(second % 60).padStart(2, '0')}`;
-                    newEntry.textContent = `${timeString} - ${position.latitude}° N, ${position.longitude}° E - ${data.altitude} km`;
-                    
-                    if (gpsHistory.firstChild) {
-                        gpsHistory.insertBefore(newEntry, gpsHistory.firstChild);
-                    } else {
-                        gpsHistory.appendChild(newEntry);
-                    }
+                    document.getElementById('battery-status').textContent = '%100';
+                    document.getElementById('temp-humidity').textContent = `${data.temperature}°C ve %58`;
 
-                    while (gpsHistory.children.length > 7) {
-                        gpsHistory.removeChild(gpsHistory.lastChild);
-                    }
+                    const timeString = `T+${String(Math.floor(second / 3600)).padStart(2, '0')}:${String(Math.floor((second % 3600) / 60)).padStart(2, '0')}:${String(second % 60).padStart(2, '0')}`;
+                    const entryText = `${timeString} - ${position.latitude}° N, ${position.longitude}° E - ${data.altitude} km`;
+
+                    const gpsHistories = [
+                        document.querySelector('.gps-history'),
+                        document.querySelector('.gps-history1')
+                    ];
+
+                    gpsHistories.forEach(gpsHistory => {
+                        if (gpsHistory) {
+                            const newEntry = document.createElement('div');
+                            newEntry.textContent = entryText;
+                            
+                            if (gpsHistory.firstChild) {
+                                gpsHistory.insertBefore(newEntry, gpsHistory.firstChild);
+                            } else {
+                                gpsHistory.appendChild(newEntry);
+                            }
+
+                            while (gpsHistory.children.length > 7) {
+                                gpsHistory.removeChild(gpsHistory.lastChild);
+                            }
+                        }
+                    });
 
                     const rocketImg = document.querySelector('.rocket-img');
                     if (rocketImg) {
@@ -1165,6 +1147,9 @@
             startTime = Date.now();
             currentSecond = 0;
 
+            document.getElementById('battery-status').textContent = '%100';
+            document.getElementById('temp-humidity').textContent = '18°C ve %58';
+
             const pauseBtn = document.getElementById('pauseBtn');
             if (pauseBtn) {
                 pauseBtn.innerHTML = ICONS.pause;
@@ -1192,26 +1177,33 @@
             clearInterval(telemetryInterval);
             
             document.getElementById('mission-timer').textContent = 'T+00:00:00';
-            document.getElementById('current-time').textContent = 'T+00:00:00';
-
-            const gpsHistory = document.querySelector('.gps-history');
-            if (gpsHistory) {
-                gpsHistory.innerHTML = '';
-            }
+            document.getElementById('current-time').textContent = '-';
             
+            document.getElementById('current-latitude').textContent = '-';
+            document.getElementById('current-longitude').textContent = '-';
+            document.querySelector('[data-type="height"]').textContent = '-';
+            document.querySelector('[data-type="speed"]').textContent = '-';
+            document.querySelector('[data-type="acceleration"]').textContent = '-';
+            document.querySelector('[data-type="temperature"]').textContent = '-';
+            
+            document.getElementById('battery-status').textContent = '-';
+            document.getElementById('temp-humidity').textContent = '-';
 
-            try {
-                updateTelemetryData(0);
-            } catch (error) {
-                console.error('Telemetri sıfırlama hatası:', error);
-            }
+            const gpsHistories = [
+                document.querySelector('.gps-history'),
+                document.querySelector('.gps-history1')
+            ];
 
+            gpsHistories.forEach(gpsHistory => {
+                if (gpsHistory) {
+                    gpsHistory.innerHTML = '<div>No Data</div>';
+                }
+            });
 
             const rocketImg = document.querySelector('.rocket-img');
             if (rocketImg) {
-                rocketImg.style.transform = 'rotate(0deg)'; // Başlangıçta 0 derece
+                rocketImg.style.transform = 'rotate(0deg)';
             }
-
 
             const pauseBtn = document.getElementById('pauseBtn');
             if (pauseBtn) {
