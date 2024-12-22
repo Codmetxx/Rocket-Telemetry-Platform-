@@ -1059,27 +1059,33 @@
             const data = rocketData[second];
             if (data) {
                 try {
+                    // Roketin pozisyonunu hesapla
                     const position = calculatePosition(second, data.altitude, data.speed);
                     
+                    // Arayüzdeki GPS verilerini güncelle
                     document.getElementById('current-latitude').textContent = `${position.latitude}° N`;
                     document.getElementById('current-longitude').textContent = `${position.longitude}° E`;
                     
+                    // Yükseklik, hız, ivme ve sıcaklık verilerini güncelle
                     document.querySelector('[data-type="height"]').textContent = `${data.altitude} km`;
                     document.querySelector('[data-type="speed"]').textContent = `${data.speed} KM/H`;
                     document.querySelector('[data-type="acceleration"]').textContent = `${data.acceleration} G`;
                     document.querySelector('[data-type="temperature"]').textContent = `${data.temperature}°C`;
-
+        
+                    // Payload bilgilerini güncelle
                     document.getElementById('battery-status').textContent = '%100';
                     document.getElementById('temp-humidity').textContent = `${data.temperature}°C ve %58`;
-
+        
+                    // GPS geçmişini güncelle
                     const timeString = `T+${String(Math.floor(second / 3600)).padStart(2, '0')}:${String(Math.floor((second % 3600) / 60)).padStart(2, '0')}:${String(second % 60).padStart(2, '0')}`;
                     const entryText = `${timeString} - ${position.latitude}° N, ${position.longitude}° E - ${data.altitude} km`;
-
+        
+                    // Her iki GPS geçmişi panelini güncelle
                     const gpsHistories = [
                         document.querySelector('.gps-history'),
                         document.querySelector('.gps-history1')
                     ];
-
+        
                     gpsHistories.forEach(gpsHistory => {
                         if (gpsHistory) {
                             const newEntry = document.createElement('div');
@@ -1090,24 +1096,54 @@
                             } else {
                                 gpsHistory.appendChild(newEntry);
                             }
-
+        
                             while (gpsHistory.children.length > 7) {
                                 gpsHistory.removeChild(gpsHistory.lastChild);
                             }
                         }
                     });
-
+        
+                    // Roket görselini güncelle
                     const rocketImg = document.querySelector('.rocket-img');
                     if (rocketImg) {
                         rocketImg.style.transform = `rotate(${position.angle}deg)`;
                         rocketImg.style.transition = 'transform 0.5s ease';
                     }
+        
+                    // Verileri veritabanına gönder
+                    fetch('/interface', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: '{{ username }}',
+                            project_id: new URLSearchParams(window.location.search).get('id'),
+                            mission_time: document.getElementById('current-time').textContent,
+                            altitude: data.altitude,
+                            speed: data.speed,
+                            acceleration: data.acceleration,
+                            temperature: data.temperature,
+                            latitude: position.latitude,
+                            longitude: position.longitude,
+                            rocket_id: '{{ rocket_name }}'
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error('Veri kaydetme hatası:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Veri gönderme hatası:', error);
+                    });
+        
                 } catch (error) {
                     console.error('Telemetri güncelleme hatası:', error);
                 }
             }
         }
-
         function startCountdown() {
             const overlay = document.getElementById('countdown-overlay');
             const numberDisplay = document.getElementById('countdown-number');
