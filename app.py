@@ -8,7 +8,7 @@ class Login:
         try:
             self.connection = pyodbc.connect(
                 'DRIVER={SQL Server};' +
-                'Server=DESKTOP-K8LPTJ0;' +
+                'Server=DESKTOP-T5KKBFV;' +
                 'Database=master;' +  
                 'Trusted_Connection=True'
             )
@@ -21,7 +21,7 @@ class Login:
             
         except pyodbc.Error as ex:
             print("Database connection is failed:", ex)
-
+    
     def create_table(self):
         try:
             drop_rocket = """
@@ -209,7 +209,7 @@ class Login:
                  altitude FLOAT,
                  speed FLOAT,
                  acceleration FLOAT,
-                 temprature FLOAT,
+                 temperature FLOAT,
                  latitude FLOAT,
                  longitude FLOAT,
                  rocket_id VARCHAR(50),
@@ -229,14 +229,17 @@ class Login:
             return False
     def rocketdata_insertion(self,rocket_data):
         try:
+            project_id=int(rocket_data["project_id"]) if rocket_data["project_id"] else None
+            
+            
             insert_query="""
              INSERT INTO rocket_data(
             username, project_id, mission_time, altitude, 
-            speed, acceleration, temprature, latitude, 
+            speed, acceleration, temperature, latitude, 
             longitude, rocket_id)
             values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
-            self.cursor.execute(insert_query,(rocket_data["username"],rocket_data["project_id"],rocket_data["mission_time"],rocket_data["altitude"],rocket_data["speed"],rocket_data["acceleration"],rocket_data["temprature"],rocket_data["latitude"],rocket_data["longtitude"],rocket_data["rocket_id"]))
+            self.cursor.execute(insert_query,(rocket_data["username"],project_id,rocket_data["mission_time"],rocket_data["altitude"],rocket_data["speed"],rocket_data["acceleration"],rocket_data["temperature"],rocket_data["latitude"],rocket_data["longitude"],rocket_data["rocket_id"]))
             self.connection.commit()
             print("the insertion succesful")
             return True
@@ -447,10 +450,54 @@ def logout():
 def interface():
     if 'username' not in session:
         return redirect(url_for('login'))
-        
+
     username = session["username"]
     project_id = request.args.get("id")
+    print(f"The project_id which is received: {project_id}")
     
+    if request.method=="POST":
+        try:
+            rocket_data=request.get_json()
+            print("Incoming data:",rocket_data)
+            if "project_id" in rocket_data and rocket_data["project_id"]:
+                try:
+                    project_id_int=int(rocket_data["project_id"])
+                    rocket_data["project_id"]=project_id_int
+                    
+                except ValueError as ex:
+                    print("Error:",ex)
+                    return jsonify({"success":False,"error":ex}) 
+            else:
+                print("Gelen veride project_id bulunamadi")
+                return jsonify({"success": False, "error": "Project ID gerekli"})
+           
+            # try:
+                
+            #     project_id_int = int(project_id)
+            #     rocket_data["project_id"] = project_id_int
+            rocket_data["username"]=username
+            print("The project_id is assigned")
+            success = loginn.rocketdata_insertion(rocket_data)
+            print(f"registration: {success}")
+            return jsonify({"success":success})
+        # except ValueError:   
+        #     print(f"Project ID ({project_id}) integer'a çevrilemedi!")
+        #     return jsonify({"success": False, "error": "Geçersiz proje ID'si"})
+             
+            # else:
+            #      print("The project_id is not assigned")
+            #      return jsonify({"success": False, "error": "Proje ID'si gerekli"})
+                
+            # print("Incoming data:",rocket_data)
+            # rocket_data["username"]=username
+            # #rocket_data["project_id"]=project_id
+            # success=loginn.rocketdata_insertion(rocket_data)
+            # print("Result of data:",success)
+            # return jsonify({"success":success})
+        except Exception as ex:
+            print("Error:",ex)
+            return jsonify({"success":False,"error":str(ex)})
+        
     try:
         user_query = """
         SELECT id, username FROM login WHERE username = ?
