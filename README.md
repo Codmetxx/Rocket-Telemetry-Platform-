@@ -43,6 +43,23 @@ The heart of the system lies in its telemetry interface, which provides real-tim
 This video shows how our rocket telemetry tracking system works in real time.
 
 
+## Developers & Contact ## 👩‍💻
+
+Created by two developers collaborating on different aspects of the system:
+
+ **[Metehan Pekacar]:**
+Backend Developer - Implemented the core functionality using Flask framework and Microsoft SQL Server database integration.
+- **https://github.com/Codmetxx**
+- **codmet1905@gmail.com**
+
+
+ **[Ertuğrul Bağbanci]:**
+Frontend Developer - Created the user interface and data visualization components using HTML, CSS, and JavaScript frameworks.
+- **https://github.com/ertugrulbgbn**
+- **ertugrulbagbancii@gmail.com**
+
+
+
 
 
 
