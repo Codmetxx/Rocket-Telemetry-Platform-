@@ -18,7 +18,7 @@ The application implements a secure authentication system that manages user acce
 ![Verification](https://github.com/user-attachments/assets/9521d49a-5dae-4f23-ae98-b64bbe687bc3)
 ![Welcome](https://github.com/user-attachments/assets/e4443f7b-cf40-4c38-8020-86b1619ba129)
 
-:red_square:**Project Management Interface**
+:red_square:**Project Management Interface:**
 
 Users can create and manage multiple rocket projects through an intuitive interface. Each project captures essential details including the project name ,rocket name and payload name. The system allows users to organize their projects efficiently while maintaining a limit of 10 projects per user to ensure optimal performance.
 
