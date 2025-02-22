@@ -8,7 +8,7 @@ class Login:
         try:
             self.connection = pyodbc.connect(
                 'DRIVER={SQL Server};' +
-                'Server=DESKTOP-T5KKBFV;' +
+                'Server=DESKTOP-XXXXXXX;' +
                 'Database=master;' +  
                 'Trusted_Connection=True'
             )
