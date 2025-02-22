@@ -41,7 +41,7 @@ The heart of the system lies in its telemetry interface, which provides real-tim
 
 ## Project Simulation 🖥️
 This video shows how our rocket telemetry tracking system works in real time.
-
+https://drive.google.com/file/d/1xt4YhOaw5yk8cpCG8m9asjnGKV4rpcQU/view?usp=sharing
 
 ## Developers & Contact 👩‍💻📞
 
